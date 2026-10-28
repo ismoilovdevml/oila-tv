@@ -70,8 +70,7 @@ public final class HomeActivity extends Activity {
                 startActivity(new Intent(this, WifiActivity.class));
                 break;
             case 5:
-                Ui.start(this, what, launchIntent(pm, "com.ktc.media"),
-                        launchIntent(pm, "com.ktc.filemanager"));
+                startActivity(new Intent(this, MediaActivity.class));
                 break;
             case 6:
                 startActivity(new Intent(this, SettingsActivity.class));

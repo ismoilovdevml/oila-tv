@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="uz.oila.tv.overlay.ktcsetting">
+    <overlay android:targetPackage="com.ktc.setting" android:priority="10" />
+    <application android:hasCode="false" />
+</manifest>
