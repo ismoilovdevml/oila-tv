@@ -22,13 +22,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** Every launchable app, four per row, with its own icon. Factory/debug tools are left out. */
+/** Every launchable app, four per row, with its own icon. Factory/debug tools and vendor screens
+ * that Oila TV replaces are left out. */
 public final class AppsActivity extends Activity {
     private static final int COLUMNS = 4;
     private static final Set<String> HIDDEN = new HashSet<>(Arrays.asList(
             "uz.oila.tv", "com.ktc.assistant", "com.ktc.serialport", "com.ktc.mslauncher",
             "mediatek.factorymenu.ui", "ktc.factorymenu.ui", "com.ktc.oobe",
-            "com.airoha.android.bluetoothlegatt", "android.systemupdate.service"));
+            "com.airoha.android.bluetoothlegatt", "android.systemupdate.service",
+            // replaced by Oila TV's own Gallery and Settings screens
+            "com.ktc.filemanager", "com.ktc.setting"));
     private static final int[][] PALETTE = {
             { 0xFF3A4A6B, 0xFF252F45 }, { 0xFF3B5E5A, 0xFF243B39 },
             { 0xFF4E3F6B, 0xFF2F2645 }, { 0xFF6B4A3A, 0xFF452F25 } };
