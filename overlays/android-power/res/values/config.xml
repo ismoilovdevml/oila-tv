@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Holding the remote's power button switches the TV fully off (3 = shut off, no dialog).
+         A short press still sleeps for a fast wake-up. A full power-off makes the next start
+         a cold boot, which also brings Wi-Fi up cleanly. -->
+    <integer name="config_longPressOnPowerBehavior">3</integer>
+</resources>
