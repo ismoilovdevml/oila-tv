@@ -80,6 +80,7 @@ final class ListRow extends View {
             right -= pw + 20f;
             side.setColor(toggle ? GREEN : Ui.TEXT_DIM);
             if (value != null) c.drawText(value, right, h / 2 + 8f, side);
+            right -= value == null ? 0 : side.measureText(value);
         } else {
             if (chevron) {
                 side.setColor(Ui.TEXT_DIM);
@@ -87,9 +88,11 @@ final class ListRow extends View {
                 right -= 30f;
             }
             side.setColor(valueColor);
-            if (value != null) c.drawText(Tile.fit(value, side, w * 0.5f), right, h / 2 + 8f, side);
+            String shown = value == null ? null : Tile.fit(value, side, w * 0.55f);
+            if (shown != null) c.drawText(shown, right, h / 2 + 8f, side);
+            right -= shown == null ? 0 : side.measureText(shown);
         }
-        float max = right - (value == null ? 0 : side.measureText(value)) - 60f;
+        float max = right - 60f;
         c.drawText(Tile.fit(title, name, Math.max(120f, max)), 30f, h / 2 + 10f, name);
 
         if (isFocused()) {

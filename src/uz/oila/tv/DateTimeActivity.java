@@ -48,8 +48,10 @@ public final class DateTimeActivity extends Activity {
         }));
         TimeZone tz = TimeZone.getDefault();
         int off = tz.getRawOffset() / 60000;
-        ListRow.add(col, new ListRow(this, "Vaqt mintaqasi", String.format("%s  GMT%+03d:%02d",
-                tz.getID().replace("Asia/", ""), off / 60, Math.abs(off % 60))));
+        // Asia/Samarkand and Asia/Tashkent are the same clock; families know it as Uzbekistan time.
+        String zone = tz.getID().matches("Asia/(Samarkand|Tashkent)") ? "O'zbekiston" : tz.getID().replace("Asia/", "");
+        ListRow.add(col, new ListRow(this, "Vaqt mintaqasi",
+                String.format("%s  GMT%+03d:%02d", zone, off / 60, Math.abs(off % 60))));
 
         root.addView(Ui.footer(this, "▲ ▼", "tanlash", "OK", "yoqish / o'chirish", "BACK", "orqaga"),
                 new LinearLayout.LayoutParams(-1, 52));
@@ -65,6 +67,8 @@ public final class DateTimeActivity extends Activity {
         t.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, px);
         t.setTextColor(0xFFFFFFFF);
         t.setTypeface(Typeface.create("sans-serif", style));
+        t.setGravity(Gravity.CENTER);
+        t.setLayoutParams(new LinearLayout.LayoutParams(-1, -2));
         return t;
     }
 

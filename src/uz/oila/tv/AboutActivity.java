@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -24,11 +23,11 @@ public final class AboutActivity extends Activity {
         LinearLayout col = ListRow.column(this, root);
 
         ListRow.section(col, "Qurilma");
-        String name = Settings.Global.getString(getContentResolver(), "device_name");
-        ListRow first = ListRow.add(col, new ListRow(this, "Nomi", name != null ? name : Build.MODEL));
-        ListRow.add(col, new ListRow(this, "Model", Build.MODEL));
+        ListRow first = ListRow.add(col, new ListRow(this, "Model", prop("ktc.board.model", Build.MODEL)));
         ListRow.add(col, new ListRow(this, "Android", Build.VERSION.RELEASE));
-        ListRow.add(col, new ListRow(this, "Proshivka", Build.DISPLAY));
+        ListRow.add(col, new ListRow(this, "Proshivka", prop("ro.product.version", Build.DISPLAY)));
+        ListRow.add(col, new ListRow(this, "Yangilangan sana",
+                new java.text.SimpleDateFormat("dd.MM.yyyy").format(new java.util.Date(Build.TIME))));
 
         ListRow.section(col, "Xotira");
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
@@ -60,6 +59,17 @@ public final class AboutActivity extends Activity {
                 new LinearLayout.LayoutParams(-1, 52));
         setContentView(root);
         first.requestFocus();
+    }
+
+    /** Vendor build properties (model, version) are only reachable through the hidden reader. */
+    private static String prop(String key, String fallback) {
+        try {
+            String v = (String) Class.forName("android.os.SystemProperties")
+                    .getMethod("get", String.class).invoke(null, key);
+            return v == null || v.isEmpty() ? fallback : v;
+        } catch (Throwable t) {
+            return fallback;
+        }
     }
 
     private static String gb(long bytes) {
