@@ -46,6 +46,11 @@ public final class AboutActivity extends Activity {
                 : (ip & 255) + "." + (ip >> 8 & 255) + "." + (ip >> 16 & 255) + "." + (ip >> 24 & 255)));
 
         ListRow.section(col, "Qo'shimcha");
+        ListRow dev = ListRow.add(col, new ListRow(this, "Dasturchi vositalari", "Developer tools"));
+        dev.chevron = true;
+        dev.onClick(new View.OnClickListener() {
+            @Override public void onClick(View v) { startActivity(new Intent(AboutActivity.this, DevActivity.class)); }
+        });
         ListRow all = ListRow.add(col, new ListRow(this, "Zavod sozlamalari menyusi", "Kengaytirilgan"));
         all.chevron = true;
         all.onClick(new View.OnClickListener() {

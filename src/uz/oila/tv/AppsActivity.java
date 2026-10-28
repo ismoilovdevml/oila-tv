@@ -41,11 +41,15 @@ public final class AppsActivity extends Activity {
                 new LinearLayout.LayoutParams(-1, 72));
 
         ScrollView scroll = new ScrollView(this);
+        // A ScrollView clips its content only when it has some padding (FLAG_PADDING_NOT_NULL);
+        // keep a sliver top/bottom so rows never slide over the footer.
+        scroll.setPadding(0, 2, 0, 2);
         scroll.setVerticalScrollBarEnabled(false);
         LinearLayout grid = new LinearLayout(this);
         grid.setOrientation(LinearLayout.VERTICAL);
         grid.setClipChildren(false);
         grid.setPadding(18, 14, 18, 14);
+        grid.setClipToPadding(false);
         scroll.addView(grid);
 
         List<ResolveInfo> apps = launchables();

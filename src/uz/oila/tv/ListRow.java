@@ -111,12 +111,16 @@ final class ListRow extends View {
     /** A centred, scrolling column of rows under a header — the layout every list screen shares. */
     static LinearLayout column(android.app.Activity a, LinearLayout root) {
         ScrollView scroll = new ScrollView(a);
+        // A ScrollView clips its content only when it has some padding (FLAG_PADDING_NOT_NULL);
+        // keep a sliver top/bottom so rows never slide over the footer.
+        scroll.setPadding(0, 2, 0, 2);
         scroll.setVerticalScrollBarEnabled(false);
         LinearLayout col = new LinearLayout(a);
         col.setOrientation(LinearLayout.VERTICAL);
         col.setClipChildren(false);
         // Room for the focused row to grow; padding on the scroller itself would clip it.
         col.setPadding(16, 12, 16, 12);
+        col.setClipToPadding(false);
         scroll.addView(col);
         LinearLayout.LayoutParams lp = Ui.weighted(22);
         lp.leftMargin = 150;

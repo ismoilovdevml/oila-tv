@@ -338,11 +338,15 @@ public final class WifiActivity extends Activity {
         // for the focus ring (padding on the scroller would clip it).
         ScrollView scroll = new ScrollView(this);
 
+        // A ScrollView clips its content only when it has some padding (FLAG_PADDING_NOT_NULL);
+        // keep a sliver top/bottom so rows never slide over the footer.
+        scroll.setPadding(0, 2, 0, 2);
         scroll.setVerticalScrollBarEnabled(false);
         list = new LinearLayout(this);
         list.setOrientation(LinearLayout.VERTICAL);
         list.setClipChildren(false);
         list.setPadding(16, 12, 16, 12);
+        list.setClipToPadding(false);
         scroll.addView(list, new LinearLayout.LayoutParams(-1, -2));
         LinearLayout.LayoutParams scl = new LinearLayout.LayoutParams(0, -1, 1f);
         scl.leftMargin = 20;

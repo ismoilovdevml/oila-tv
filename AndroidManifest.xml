@@ -94,6 +94,14 @@
             android:name=".BoostActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".DevActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".PropsActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape" />
         <service
             android:name=".KeyService"
             android:label="Oila TV pult tugmalari"
