@@ -10,8 +10,9 @@ KS=${KEYSTORE:-$HOME/.android/debug.keystore}
 OUT=build
 
 rm -rf "$OUT" && mkdir -p "$OUT/classes" "$OUT/dex"
+"$BT/aapt2" compile --dir res -o "$OUT/res.zip"
 "$BT/aapt2" link -o "$OUT/base.apk" -I "$JAR" --manifest AndroidManifest.xml \
-    --min-sdk-version 28 --target-sdk-version 28
+    --min-sdk-version 28 --target-sdk-version 28 "$OUT/res.zip"
 # android.jar has no LambdaMetafactory: use anonymous classes, not lambdas.
 javac -nowarn -Xlint:-options -source 8 -target 8 -bootclasspath "$JAR" -cp "$JAR" \
     -d "$OUT/classes" $(find src -name '*.java')

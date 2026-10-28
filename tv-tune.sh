@@ -23,6 +23,11 @@ case $MODE in
     for k in $ANIM; do $A settings put global $k 0; done
     # Android 9 only returns Wi-Fi scan results to apps holding location access.
     $A pm grant uz.oila.tv android.permission.ACCESS_FINE_LOCATION
+    $A settings put secure location_providers_allowed +network
+    $A settings put secure location_providers_allowed +gps
+    # Global remote shortcuts (red = YouTube) via the app's key-filtering accessibility service.
+    $A settings put secure enabled_accessibility_services uz.oila.tv/uz.oila.tv.KeyService
+    $A settings put secure accessibility_enabled 1
     # This firmware drops every remote key until persist.sys.bootanim_exit=1, which only
     # its first-run wizard sets; SurfaceFlinger clears it on each cold boot.
     $A setprop persist.sys.bootanim_exit 1
@@ -31,6 +36,8 @@ case $MODE in
     for p in $TRIM; do $A pm enable $p; done
     $A cmd package set-home-activity $HOME_STOCK
     for k in $ANIM; do $A settings put global $k 1.0; done
+    $A settings delete secure enabled_accessibility_services
+    $A settings put secure accessibility_enabled 0
     ;;
   *) echo "mode must be apply|rollback" >&2; exit 2 ;;
 esac

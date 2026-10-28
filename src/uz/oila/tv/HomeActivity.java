@@ -58,6 +58,10 @@ public final class HomeActivity extends Activity {
                         launchIntent(pm, YOUTUBE));
                 break;
             case 1:
+                if (NoChannelsActivity.tunerChannelCount(this) == 0) {
+                    startActivity(new Intent(this, NoChannelsActivity.class));
+                    break;
+                }
                 Ui.start(this, what,
                         new Intent(Intent.ACTION_VIEW,
                                 TvContract.buildChannelUriForPassthroughInput(tunerInputId()))

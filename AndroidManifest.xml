@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
@@ -46,9 +47,24 @@
             android:excludeFromRecents="true"
             android:screenOrientation="landscape" />
         <activity
+            android:name=".NoChannelsActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".WifiActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustPan" />
+        <service
+            android:name=".KeyService"
+            android:label="Oila TV pult tugmalari"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/key_service" />
+        </service>
     </application>
 </manifest>
