@@ -93,6 +93,10 @@ public final class NoChannelsActivity extends Activity {
             @Override public void onClick(View v) {
                 Toast.makeText(NoChannelsActivity.this, "Pultda MENU → CH → Avtomatik sozlash",
                         Toast.LENGTH_LONG).show();
+                // Antenna mode first, so the player's own scan searches the air, not cable.
+                sendBroadcast(new Intent(SourceActivity.TV).putExtra("tunerMode", "dvbt").setComponent(
+                        new ComponentName(SourceActivity.TV_PLAYER,
+                                "com.ktc.tvplayer.activity.receiver.SourceReceiver")));
                 Ui.start(NoChannelsActivity.this, "Jonli TV", new Intent(Intent.ACTION_MAIN)
                         .setComponent(new ComponentName(SourceActivity.TV_PLAYER, SourceActivity.TV_PLAYER_ROOT)));
             }

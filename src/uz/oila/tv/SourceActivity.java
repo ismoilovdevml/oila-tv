@@ -19,6 +19,11 @@ import java.util.List;
 public final class SourceActivity extends Activity {
     static final String TV_PLAYER = "com.ktc.tvplayer";
     static final String TV_PLAYER_ROOT = "com.ktc.tvplayer.activity.RootActivity";
+    private static final String SOURCE_RECEIVER = "com.ktc.tvplayer.activity.receiver.SourceReceiver";
+    static final String TV = "android.intent.action.CHANGE_TVINPUT_TYPE_TV";
+    private static final String AV = "android.intent.action.CHANGE_TVINPUT_TYPE_AV";
+    private static final String[] HDMI = { "android.intent.action.CHANGE_TVINPUT_TYPE_HDMI",
+            "android.intent.action.CHANGE_TVINPUT_TYPE_HDMI2" };
     private static final int HDMI_PORTS_SHOWN = 2;
 
     @Override
@@ -32,9 +37,9 @@ public final class SourceActivity extends Activity {
         TvInputInfo tuner = first(TvInputInfo.TYPE_TUNER);
         TvInputInfo av = first(TvInputInfo.TYPE_COMPOSITE);
         if (tuner != null) tiles.add(tile("Antenna TV", "Efir kanallari", Glyphs.LIVE_TV,
-                0xFF66A0F2, 0xFF2F63DD, tuner.getId()));
+                0xFF66A0F2, 0xFF2F63DD, tuner.getId(), TV));
         if (av != null) tiles.add(tile("AV", "Sariq-oq-qizil kabel", Glyphs.SOURCE,
-                0xFFF4B068, 0xFFE57C33, av.getId()));
+                0xFFF4B068, 0xFFE57C33, av.getId(), AV));
         // The input list comes back in no useful order; the trailing hardware number follows the
         // physical port order (HW6 = HDMI 1), so sort on it.
         List<TvInputInfo> ports = inputs();
@@ -48,7 +53,7 @@ public final class SourceActivity extends Activity {
             if (info.getType() != TvInputInfo.TYPE_HDMI || n >= HDMI_PORTS_SHOWN) continue;
             n++;
             tiles.add(tile("HDMI " + n, n == 1 ? "Pristavka, konsol" : "Noutbuk, pleyer", Glyphs.SOURCE,
-                    n == 1 ? 0xFF968AF3 : 0xFFBD7CEA, n == 1 ? 0xFF5548DD : 0xFF8538D2, info.getId()));
+                    n == 1 ? 0xFF968AF3 : 0xFFBD7CEA, n == 1 ? 0xFF5548DD : 0xFF8538D2, info.getId(), HDMI[n - 1]));
         }
         if (tiles.isEmpty()) {
             // Not a TV-input device: fall back to whatever source menu the firmware offers.
@@ -68,16 +73,35 @@ public final class SourceActivity extends Activity {
         tiles.get(0).requestFocus();
     }
 
-    private Tile tile(String title, String sub, int glyph, int c0, int c1, final String inputId) {
+    private Tile tile(String title, String sub, int glyph, int c0, int c1, final String inputId,
+            final String action) {
         Tile t = new Tile(this, title, sub, glyph, c0, c1, 38f).centered();
         t.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { open(inputId); }
+            @Override public void onClick(View v) { watch(SourceActivity.this, action, inputId); }
         });
         return t;
     }
 
-    private void open(String inputId) {
-        Ui.start(this, "Qurilma",
+    /**
+     * Switches the TV to an input and shows it. On this firmware the player's own source receiver
+     * does the switch reliably (a channel URI is ignored while the player is already open); other
+     * TVs fall back to the standard passthrough URI. The antenna input goes through a channel check
+     * first, so an empty channel list gets an explained screen instead of a bare black one.
+     */
+    static void watch(Activity a, String action, String inputId) {
+        if (TV.equals(action) && NoChannelsActivity.tunerChannelCount(a) == 0) {
+            a.startActivity(new Intent(a, NoChannelsActivity.class));
+            return;
+        }
+        Intent switcher = new Intent(action).setComponent(new ComponentName(TV_PLAYER, SOURCE_RECEIVER));
+        if (TV.equals(action)) switcher.putExtra("tunerMode", "dvbt"); // antenna, not cable
+        if (!a.getPackageManager().queryBroadcastReceivers(switcher, 0).isEmpty()) {
+            a.sendBroadcast(switcher);
+            Ui.start(a, "Qurilma", new Intent(Intent.ACTION_MAIN)
+                    .setComponent(new ComponentName(TV_PLAYER, TV_PLAYER_ROOT)));
+            return;
+        }
+        Ui.start(a, "Qurilma",
                 new Intent(Intent.ACTION_VIEW, TvContract.buildChannelUriForPassthroughInput(inputId))
                         .setComponent(new ComponentName(TV_PLAYER, TV_PLAYER_ROOT)),
                 new Intent(Intent.ACTION_VIEW, TvContract.buildChannelUriForPassthroughInput(inputId)));
