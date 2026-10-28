@@ -41,11 +41,11 @@ public final class AppsActivity extends Activity {
                 new LinearLayout.LayoutParams(-1, 72));
 
         ScrollView scroll = new ScrollView(this);
-        scroll.setPadding(10, 10, 10, 10);
         scroll.setVerticalScrollBarEnabled(false);
         LinearLayout grid = new LinearLayout(this);
         grid.setOrientation(LinearLayout.VERTICAL);
         grid.setClipChildren(false);
+        grid.setPadding(18, 14, 18, 14);
         scroll.addView(grid);
 
         List<ResolveInfo> apps = launchables();

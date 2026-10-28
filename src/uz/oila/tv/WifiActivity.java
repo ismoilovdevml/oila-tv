@@ -334,13 +334,15 @@ public final class WifiActivity extends Activity {
 
         body.addView(card, new LinearLayout.LayoutParams(400, -1));
 
-        // The scroller must clip, or rows slide over the footer; padding leaves room for the focus ring.
+        // The scroller must clip, or rows slide over the footer; the list's own padding leaves room
+        // for the focus ring (padding on the scroller would clip it).
         ScrollView scroll = new ScrollView(this);
-        scroll.setPadding(10, 10, 10, 10);
+
         scroll.setVerticalScrollBarEnabled(false);
         list = new LinearLayout(this);
         list.setOrientation(LinearLayout.VERTICAL);
         list.setClipChildren(false);
+        list.setPadding(16, 12, 16, 12);
         scroll.addView(list, new LinearLayout.LayoutParams(-1, -2));
         LinearLayout.LayoutParams scl = new LinearLayout.LayoutParams(0, -1, 1f);
         scl.leftMargin = 20;

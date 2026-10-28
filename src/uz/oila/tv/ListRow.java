@@ -21,7 +21,6 @@ final class ListRow extends View {
     boolean chevron;
 
     private final Paint bg = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint ring = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint name = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint side = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF box = new RectF();
@@ -32,9 +31,6 @@ final class ListRow extends View {
         this.value = value;
         setFocusable(true);
         setFocusableInTouchMode(true);
-        ring.setStyle(Paint.Style.STROKE);
-        ring.setStrokeWidth(5f);
-        ring.setColor(Tile.FOCUS_COLOR);
         name.setColor(Ui.TEXT);
         name.setTextSize(28f);
         name.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
@@ -65,9 +61,7 @@ final class ListRow extends View {
     @Override
     protected void onDraw(Canvas c) {
         float w = getWidth(), h = getHeight();
-        box.set(0, 0, w, h);
-        bg.setColor(isFocused() ? 0xFF2C3753 : 0xFF1C2232);
-        c.drawRoundRect(box, 16f, 16f, bg);
+        drawCard(c, w, h, isFocused(), bg, box);
         float right = w - 30f;
 
         if (toggle != null) {
@@ -94,21 +88,35 @@ final class ListRow extends View {
         }
         float max = right - 60f;
         c.drawText(Tile.fit(title, name, Math.max(120f, max)), 30f, h / 2 + 10f, name);
+    }
 
-        if (isFocused()) {
-            box.set(2.5f, 2.5f, w - 2.5f, h - 2.5f);
-            c.drawRoundRect(box, 14f, 14f, ring);
+    /**
+     * Row background with the focus border built from two fills (yellow, then the card inset
+     * on top). This TV's GPU drops the sides of a stroked round rect on a scaled view.
+     */
+    static void drawCard(Canvas c, float w, float h, boolean focused, Paint p, RectF box) {
+        box.set(0, 0, w, h);
+        if (focused) {
+            p.setColor(Tile.FOCUS_COLOR);
+            c.drawRoundRect(box, 16f, 16f, p);
+            box.set(5f, 5f, w - 5f, h - 5f);
+            p.setColor(0xFF2C3753);
+            c.drawRoundRect(box, 12f, 12f, p);
+        } else {
+            p.setColor(0xFF1C2232);
+            c.drawRoundRect(box, 16f, 16f, p);
         }
     }
 
     /** A centred, scrolling column of rows under a header — the layout every list screen shares. */
     static LinearLayout column(android.app.Activity a, LinearLayout root) {
         ScrollView scroll = new ScrollView(a);
-        scroll.setPadding(10, 10, 10, 10);
         scroll.setVerticalScrollBarEnabled(false);
         LinearLayout col = new LinearLayout(a);
         col.setOrientation(LinearLayout.VERTICAL);
         col.setClipChildren(false);
+        // Room for the focused row to grow; padding on the scroller itself would clip it.
+        col.setPadding(16, 12, 16, 12);
         scroll.addView(col);
         LinearLayout.LayoutParams lp = Ui.weighted(22);
         lp.leftMargin = 150;

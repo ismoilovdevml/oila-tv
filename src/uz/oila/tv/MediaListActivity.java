@@ -65,11 +65,11 @@ public final class MediaListActivity extends Activity {
             root.addView(t, Ui.weighted(0));
         } else {
             ScrollView scroll = new ScrollView(this);
-            scroll.setPadding(10, 10, 10, 10);
             scroll.setVerticalScrollBarEnabled(false);
             LinearLayout grid = new LinearLayout(this);
             grid.setOrientation(LinearLayout.VERTICAL);
             grid.setClipChildren(false);
+            grid.setPadding(18, 14, 18, 14);
             scroll.addView(grid);
             Thumb first = null;
             for (int i = 0; i < uris.size(); i += COLUMNS) {

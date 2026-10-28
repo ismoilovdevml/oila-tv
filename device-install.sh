@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install (or remove) the read-only-partition pieces on the Premier TV6681 over root adb:
-#   /system/etc/init/oila-remote-fix.rc        remote works after a cold boot
+#   /vendor/etc/init/oila-remote-fix.rc        remote works after a cold boot
 #   /vendor/overlay/KtcSettingEn/*.apk          English text for the vendor developer panel
 # Overlays outside the vendor/system partitions are refused unless platform-signed, hence /vendor.
 # Usage: device-install.sh <ip:port> apply|rollback      (reboot afterwards to take effect)
@@ -9,9 +9,8 @@ S=${1:?ip:port}; MODE=${2:?apply|rollback}
 cd "$(dirname "$0")"
 adb -s "$S" root >/dev/null; sleep 3; adb connect "$S" >/dev/null
 A="adb -s $S shell"
-RC=/system/etc/init/oila-remote-fix.rc
+RC=/vendor/etc/init/oila-remote-fix.rc
 OV=/vendor/overlay/KtcSettingEn
-$A mount -o rw,remount /
 $A mount -o rw,remount /vendor
 case $MODE in
   apply)
@@ -28,6 +27,5 @@ case $MODE in
 esac
 $A sync
 $A mount -o ro,remount /vendor || true
-$A mount -o ro,remount / || true
 $A "ls -lZ $RC $OV 2>&1"
 echo "reboot the TV to apply"
