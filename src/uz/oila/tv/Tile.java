@@ -19,6 +19,7 @@ class Tile extends View {
     private final int colorStart;
     private final int colorEnd;
     private final float titleSize;
+    private boolean centered;
 
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint ring = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -58,6 +59,14 @@ class Tile extends View {
         subPaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
     }
 
+    /** Big glyph in the middle with the text centred under it (for short rows of choices). */
+    Tile centered() {
+        centered = true;
+        titlePaint.setTextAlign(Paint.Align.CENTER);
+        subPaint.setTextAlign(Paint.Align.CENTER);
+        return this;
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int ow, int oh) {
         fill.setShader(new LinearGradient(w, 0, 0, h, colorStart, colorEnd, Shader.TileMode.CLAMP));
@@ -77,8 +86,15 @@ class Tile extends View {
         box.set(0, 0, w, h);
         c.drawRoundRect(box, 22f, 22f, fill);
 
-        if (glyph != Glyphs.NONE) Glyphs.draw(c, glyph, 24f, 22f, 52f, 0xFFFFFFFF, colorEnd);
-        drawContent(c, w, h);
+        if (centered) {
+            float g = Math.min(96f, h * 0.36f);
+            Glyphs.draw(c, glyph, (w - g) / 2, h * 0.42f - g * 0.75f, g, 0xFFFFFFFF, colorEnd);
+            c.drawText(fit(title, titlePaint, w - 32), w / 2, h * 0.72f, titlePaint);
+            c.drawText(fit(subtitle, subPaint, w - 32), w / 2, h * 0.72f + subPaint.getTextSize() * 1.5f, subPaint);
+        } else {
+            if (glyph != Glyphs.NONE) Glyphs.draw(c, glyph, 24f, 22f, 52f, 0xFFFFFFFF, colorEnd);
+            drawContent(c, w, h);
+        }
 
         if (isFocused()) {
             box.inset(3f, 3f);

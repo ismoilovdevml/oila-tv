@@ -10,7 +10,6 @@ import android.media.tv.TvInputManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -66,22 +65,23 @@ public final class HomeActivity extends Activity {
                         explicit(TV_PLAYER, TV_PLAYER_ROOT));
                 break;
             case 2:
-                Ui.start(this, what, new Intent("android.intent.action.INPUT_SOURCE_ACTIVITY"));
+                startActivity(new Intent(this, SourceActivity.class));
                 break;
             case 3:
                 Ui.start(this, what, launchIntent(pm, "com.netflix.mediaclient"));
                 break;
             case 4:
-                Ui.start(this, what, new Intent(Settings.ACTION_WIFI_SETTINGS));
+                startActivity(new Intent(this, WifiActivity.class));
                 break;
             case 5:
                 Ui.start(this, what, launchIntent(pm, "com.ktc.media"),
                         launchIntent(pm, "com.ktc.filemanager"));
                 break;
+            case 6:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
             default:
-                Ui.start(this, what,
-                        explicit("com.ktc.setting", "com.ktc.setting.view.main.MainActivity"),
-                        new Intent(Settings.ACTION_SETTINGS));
+                startActivity(new Intent(this, AppsActivity.class));
         }
     }
 
@@ -124,7 +124,8 @@ public final class HomeActivity extends Activity {
                 new Tile(this, "Netflix", "Kino va serial", Glyphs.NETFLIX, 0xFFC4393C, 0xFF8A1A1E),
                 new Tile(this, "Wi-Fi", "Tarmoqqa ulanish", Glyphs.WIFI, 0xFF74D0BC, 0xFF41A08C),
                 new Tile(this, "Galereya", "USB: video, rasm", Glyphs.GALLERY, 0xFFBD7CEA, 0xFF8538D2),
-                new Tile(this, "Sozlamalar", "Til, vaqt, ekran", Glyphs.SETTINGS, 0xFF8F98AB, 0xFF596174) };
+                new Tile(this, "Sozlamalar", "Til, vaqt, ekran", Glyphs.SETTINGS, 0xFF8F98AB, 0xFF596174),
+                new Tile(this, "Ilovalar", "Barcha ilovalar", Glyphs.APPS, 0xFF5CB8E8, 0xFF2D7FC0) };
         for (int i = 0; i < tiles.length; i++) {
             final int index = i;
             tiles[i].setOnClickListener(new View.OnClickListener() {
@@ -133,7 +134,7 @@ public final class HomeActivity extends Activity {
         }
 
         root.addView(Ui.tileRow(this, tiles[0], tiles[1], tiles[2], tiles[3]), Ui.weighted(22));
-        root.addView(Ui.tileRow(this, tiles[4], tiles[5], tiles[6]), Ui.weighted(22));
+        root.addView(Ui.tileRow(this, tiles[4], tiles[5], tiles[6], tiles[7]), Ui.weighted(22));
 
         LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(-1, 52);
         footLp.topMargin = 14;
