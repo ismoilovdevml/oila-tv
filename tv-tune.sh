@@ -25,6 +25,11 @@ case $MODE in
     $A pm grant uz.oila.tv android.permission.ACCESS_FINE_LOCATION
     $A settings put secure location_providers_allowed +network
     $A settings put secure location_providers_allowed +gps
+    # Development-level permissions the Language / Date & time / Gallery screens use.
+    $A pm grant uz.oila.tv android.permission.CHANGE_CONFIGURATION
+    $A pm grant uz.oila.tv android.permission.WRITE_SECURE_SETTINGS
+    $A pm grant uz.oila.tv android.permission.READ_EXTERNAL_STORAGE
+    $A appops set uz.oila.tv WRITE_SETTINGS allow
     # Global remote shortcuts (red = YouTube) via the app's key-filtering accessibility service.
     $A settings put secure enabled_accessibility_services uz.oila.tv/uz.oila.tv.KeyService
     $A settings put secure accessibility_enabled 1

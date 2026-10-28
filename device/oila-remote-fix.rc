@@ -1,0 +1,5 @@
+# This firmware ignores every remote key until persist.sys.bootanim_exit=1. Only its first-run
+# wizard ever sets it, and SurfaceFlinger clears it on each cold boot, so after a power cut the
+# remote stays dead. Set it once boot has finished.
+on property:sys.boot_completed=1
+    setprop persist.sys.bootanim_exit 1
