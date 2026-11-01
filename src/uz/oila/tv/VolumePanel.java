@@ -29,7 +29,7 @@ final class VolumePanel {
     private static final String MUTE_CHANGED = "android.media.STREAM_MUTE_CHANGED_ACTION";
     private static final String EXTRA_STREAM = "android.media.EXTRA_VOLUME_STREAM_TYPE";
     private static final int HIDE_MS = 2500;
-    private static final int W = 640, H = 132;
+    private static final int W = 900, H = 96;
 
     private final Context context;
     private final WindowManager wm;
@@ -112,28 +112,28 @@ final class VolumePanel {
         protected void onDraw(Canvas c) {
             fill.setColor(0xF0171C2A);
             r.set(0, 0, getWidth(), getHeight());
-            c.drawRoundRect(r, 28, 28, fill);
+            c.drawRoundRect(r, 24, 24, fill);
 
             int accent = muted ? 0xFFFF8A80 : 0xFF6FE3A5;
-            Glyphs.draw(c, muted ? Glyphs.VOLUME_OFF : Glyphs.VOLUME, 34, 34, 64, muted ? accent : Ui.TEXT, 0);
+            Glyphs.draw(c, muted ? Glyphs.VOLUME_OFF : Glyphs.VOLUME, 30, (getHeight() - 48) / 2f, 48, muted ? accent : Ui.TEXT, 0);
 
-            float left = 128, right = getWidth() - 132, cy = getHeight() / 2f;
+            float left = 104, right = getWidth() - 112, cy = getHeight() / 2f;
             if (muted) {
-                text.setTextSize(36);
+                text.setTextSize(30);
                 text.setTextAlign(Paint.Align.LEFT);
-                c.drawText(mutedLabel, left, cy + 13, text);
+                c.drawText(mutedLabel, left, cy + 11, text);
                 return;
             }
             fill.setColor(0xFF2A3142);
-            r.set(left, cy - 12, right, cy + 12);
-            c.drawRoundRect(r, 12, 12, fill);
+            r.set(left, cy - 8, right, cy + 8);
+            c.drawRoundRect(r, 8, 8, fill);
             fill.setColor(accent);
-            r.set(left, cy - 12, left + (right - left) * level / max, cy + 12);
-            c.drawRoundRect(r, 12, 12, fill);
+            r.set(left, cy - 8, left + (right - left) * level / max, cy + 8);
+            c.drawRoundRect(r, 8, 8, fill);
 
-            text.setTextSize(56);
+            text.setTextSize(44);
             text.setTextAlign(Paint.Align.RIGHT);
-            c.drawText(String.valueOf(level), getWidth() - 34, cy + 20, text);
+            c.drawText(String.valueOf(level), getWidth() - 30, cy + 16, text);
         }
     }
 }
