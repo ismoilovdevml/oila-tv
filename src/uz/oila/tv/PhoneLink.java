@@ -181,7 +181,7 @@ final class PhoneLink implements Runnable {
         if (request[0].equals("GET") && path.equals("/")) {
             reply(out, "200 OK", "text/html", PAGE);
         } else if (request[0].equals("POST") && path.equals("/yt")) {
-            reply(out, "200 OK", "text/plain", youtube(text.trim()) ? "ok" : "noapp");
+            reply(out, "200 OK", "text/plain", youtube(app, text.trim()) ? "ok" : "noapp");
         } else if (request[0].equals("POST") && (path.equals("/type") || path.equals("/enter"))) {
             Target t = PhoneLink.target;
             if (t == null) {
@@ -196,16 +196,17 @@ final class PhoneLink implements Runnable {
         }
     }
 
-    private boolean youtube(String query) {
+    /** Opens YouTube's results page for {@code query}. */
+    static boolean youtube(Context c, String query) {
         if (query.isEmpty()) return true;
         try {
             Uri uri = Uri.parse("https://www.youtube.com/results?search_query=" + URLEncoder.encode(query, "UTF-8"));
             Intent i = new Intent(Intent.ACTION_VIEW, uri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             try {
-                app.startActivity(new Intent(i).setComponent(new ComponentName("com.google.android.youtube.tv",
+                c.startActivity(new Intent(i).setComponent(new ComponentName("com.google.android.youtube.tv",
                         "com.google.android.apps.youtube.tv.activity.ShellActivity")));
             } catch (ActivityNotFoundException e) {
-                app.startActivity(i);
+                c.startActivity(i);
             }
             return true;
         } catch (IOException | ActivityNotFoundException e) {

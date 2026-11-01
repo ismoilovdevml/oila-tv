@@ -99,6 +99,10 @@
             android:excludeFromRecents="true"
             android:screenOrientation="landscape" />
         <activity
+            android:name=".SearchActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".PhoneActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="landscape" />
