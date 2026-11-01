@@ -32,4 +32,10 @@
     <string name="page_sent">Yuborildi</string>
     <string name="page_denied_title">Kirish kodi noto\'g\'ri</string>
     <string name="page_denied_body">Televizordagi QR kodni qaytadan skanerlang: Sozlamalar → Telefon.</string>
+    <string name="remote_open">Pult (masofadan boshqarish)</string>
+    <string name="remote_title">Oila TV — pult</string>
+    <string name="remote_hint">Televizorni telefondan boshqaring</string>
+    <string name="remote_back">Orqaga</string>
+    <string name="remote_home">Bosh sahifa</string>
+    <string name="remote_type">Yozishga o\'tish</string>
 </resources>

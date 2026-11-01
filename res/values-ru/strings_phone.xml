@@ -31,4 +31,10 @@
     <string name="page_sent">Отправлено</string>
     <string name="page_denied_title">Неверный код доступа</string>
     <string name="page_denied_body">Отсканируйте QR-код на телевизоре ещё раз: Настройки → Телефон.</string>
+    <string name="remote_open">Пульт (управление)</string>
+    <string name="remote_title">Oila TV — пульт</string>
+    <string name="remote_hint">Управляйте телевизором с телефона</string>
+    <string name="remote_back">Назад</string>
+    <string name="remote_home">Главная</string>
+    <string name="remote_type">К вводу текста</string>
 </resources>

@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -34,6 +35,12 @@ final class PhoneLink implements Runnable {
     static final String KEYBOARD = "uz.oila.tv/.PhoneKeyboard";
     private static final String TAG = "OilaPhone";
     private static final int MAX_BODY = 4096, MAX_OPEN = 16, IDLE_MS = 60000;
+    // The root input daemon (tools/remote) listens here and injects keys system-wide.
+    private static final int REMOTE_PORT = 8766;
+    // Only these keycodes may be injected, so the page can never send arbitrary events.
+    private static final java.util.Set<Integer> ALLOWED_KEYS = new java.util.HashSet<Integer>(
+            java.util.Arrays.asList(3, 4, 19, 20, 21, 22, 23, 24, 25, 164, 66, 67, 82, 85));
+    private Socket remote; // cached connection to the daemon
     private static PhoneLink running;
     private final AtomicInteger open = new AtomicInteger();
 
@@ -180,6 +187,10 @@ final class PhoneLink implements Runnable {
         }
         if (request[0].equals("GET") && path.equals("/")) {
             reply(out, "200 OK", "text/html", page());
+        } else if (request[0].equals("GET") && path.equals("/remote")) {
+            reply(out, "200 OK", "text/html", remotePage());
+        } else if (request[0].equals("POST") && path.equals("/key")) {
+            reply(out, "200 OK", "text/plain", sendKey(text.trim()) ? "ok" : "noremote");
         } else if (request[0].equals("POST") && path.equals("/yt")) {
             reply(out, "200 OK", "text/plain", youtube(app, text.trim()) ? "ok" : "noapp");
         } else if (request[0].equals("POST") && (path.equals("/type") || path.equals("/enter"))) {
@@ -215,6 +226,34 @@ final class PhoneLink implements Runnable {
         }
     }
 
+    /** Forwards one whitelisted keycode to the root daemon, which injects it system-wide. */
+    private synchronized boolean sendKey(String body) {
+        int code;
+        try {
+            code = Integer.parseInt(body);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        if (!ALLOWED_KEYS.contains(code)) return false;
+        byte[] line = ("K " + code + "\n").getBytes(StandardCharsets.US_ASCII);
+        for (int attempt = 0; attempt < 2; attempt++) {
+            try {
+                if (remote == null || remote.isClosed() || !remote.isConnected()) {
+                    remote = new Socket();
+                    remote.connect(new InetSocketAddress("127.0.0.1", REMOTE_PORT), 500);
+                }
+                remote.getOutputStream().write(line);
+                remote.getOutputStream().flush();
+                return true;
+            } catch (IOException e) {
+                try { if (remote != null) remote.close(); } catch (IOException ignored) { }
+                remote = null; // reconnect once; the daemon may have restarted
+            }
+        }
+        Log.w(TAG, "remote daemon unreachable on " + REMOTE_PORT);
+        return false;
+    }
+
     private static String param(String query, String name) {
         for (String pair : query.split("&")) {
             if (pair.startsWith(name + "=")) return pair.substring(name.length() + 1);
@@ -248,7 +287,18 @@ final class PhoneLink implements Runnable {
             + "border:2px solid #2a3142;border-radius:12px}button{display:block;width:100%;margin-top:12px;"
             + "padding:16px;font-size:20px;font-weight:700;color:#fff;border:0;border-radius:12px}"
             + ".yt{background:#e53935}.tv{background:#2f63dd}.gh{background:#2a3142}"
-            + "#s{margin-top:14px;min-height:1.4em;color:#9aa3b2}</style>";
+            + "#s{margin-top:14px;min-height:1.4em;color:#9aa3b2}a.link{display:block;text-align:center;"
+            + "margin-top:18px;color:#5cb8e8;font-size:18px}</style>";
+
+    // Grid for the d-pad remote: a 3x3 cross with OK in the middle, then wide rows for the rest.
+    private static final String REMOTE_STYLE = "<style>.pad{display:grid;max-width:360px;margin:8px auto;"
+            + "grid-template-columns:repeat(3,1fr);gap:10px;"
+            + "grid-template-areas:'. up .' 'left ok right' '. down .'}.k{font-size:28px;font-weight:700;"
+            + "color:#fff;background:#2a3142;border:0;border-radius:16px;padding:26px 0;-webkit-user-select:none;"
+            + "user-select:none;-webkit-tap-highlight-color:transparent}.k:active{background:#3a4360}"
+            + ".up{grid-area:up}.left{grid-area:left}.ok{grid-area:ok;background:#2f63dd}.right{grid-area:right}"
+            + ".down{grid-area:down}.row{display:flex;gap:10px;max-width:360px;margin:10px auto}"
+            + ".wide{flex:1;padding:18px 0;font-size:20px}</style>";
 
     /** The phone page in the TV's current language; JS strings are passed through {@link #js}. */
     private String page() {
@@ -257,7 +307,9 @@ final class PhoneLink implements Runnable {
                 + "<textarea id=t placeholder='" + html(app.getString(R.string.page_placeholder)) + "' autofocus></textarea>"
                 + "<button class=yt id=yt>" + html(app.getString(R.string.page_youtube)) + "</button>"
                 + "<button class=tv id=en>" + html(app.getString(R.string.page_send)) + "</button>"
-                + "<button class=gh id=cl>" + html(app.getString(R.string.page_clear)) + "</button><div id=s></div><script>"
+                + "<button class=gh id=cl>" + html(app.getString(R.string.page_clear)) + "</button>"
+                + "<a class=link href='/remote?k=" + token(app) + "'>" + html(app.getString(R.string.remote_open))
+                + "</a><div id=s></div><script>"
                 + "var k=new URLSearchParams(location.search).get('k'),t=document.getElementById('t'),"
                 + "s=document.getElementById('s'),w;"
                 + "function post(p,b){return fetch(p+'?k='+encodeURIComponent(k),{method:'POST',body:b||''})"
@@ -272,6 +324,39 @@ final class PhoneLink implements Runnable {
                 + "return post('/enter')}).then(function(r){say(r," + js(R.string.page_sent) + ")})};"
                 + "document.getElementById('cl').onclick=function(){t.value='';post('/type','');t.focus()};"
                 + "</script></body></html>";
+    }
+
+    /** A full on-screen remote: d-pad, OK, Back, Home and volume, each posting a keycode to /key. */
+    private String remotePage() {
+        return "<!doctype html><html lang=" + lang() + "><head>" + STYLE + REMOTE_STYLE + "</head><body>"
+                + "<h1>" + html(app.getString(R.string.remote_title)) + "</h1>"
+                + "<div class=pad>"
+                + btn("up", "19", "▲") + btn("ok", "23", "OK")
+                + btn("left", "21", "◀") + btn("right", "22", "▶")
+                + btn("down", "20", "▼")
+                + "</div>"
+                + "<div class=row>"
+                + wide("4", "↩ " + html(app.getString(R.string.remote_back)))
+                + wide("3", "⌂ " + html(app.getString(R.string.remote_home))) + "</div>"
+                + "<div class=row>"
+                + wide("25", "🔉 −") + wide("164", "🔇") + wide("24", "🔊 +") + "</div>"
+                + "<a class=link href='/?k=" + token(app) + "'>" + html(app.getString(R.string.remote_type)) + "</a>"
+                + "<div id=s></div><script>"
+                + "var k=new URLSearchParams(location.search).get('k'),s=document.getElementById('s');"
+                + "function key(c){fetch('/key?k='+encodeURIComponent(k),{method:'POST',body:c})"
+                + ".then(function(r){return r.text()}).then(function(r){if(r=='noremote')s.textContent="
+                + js(R.string.page_offline) + ";}).catch(function(){})}"
+                + "document.querySelectorAll('[data-k]').forEach(function(b){"
+                + "b.addEventListener('click',function(){key(b.getAttribute('data-k'))});});"
+                + "</script></body></html>";
+    }
+
+    private static String btn(String cls, String code, String label) {
+        return "<button class='k " + cls + "' data-k=" + code + ">" + label + "</button>";
+    }
+
+    private static String wide(String code, String label) {
+        return "<button class='k wide' data-k=" + code + ">" + label + "</button>";
     }
 
     private String denied() {

@@ -31,4 +31,10 @@
     <string name="page_sent">Sent</string>
     <string name="page_denied_title">Wrong access code</string>
     <string name="page_denied_body">Scan the QR code on the TV again: Settings → Phone.</string>
+    <string name="remote_open">Remote control</string>
+    <string name="remote_title">Oila TV — remote</string>
+    <string name="remote_hint">Control the TV from your phone</string>
+    <string name="remote_back">Back</string>
+    <string name="remote_home">Home</string>
+    <string name="remote_type">Switch to typing</string>
 </resources>

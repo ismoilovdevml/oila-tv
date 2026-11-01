@@ -1,0 +1,13 @@
+# Root input bridge for the phone remote (tools/remote/Remote.java).
+# Runs as root in the su domain, the same context under which injection was proven, and listens
+# on 127.0.0.1:8766; the launcher's phone page forwards whitelisted keycodes to it.
+service oila_remote /system/bin/app_process /system/bin Remote
+    class main
+    user root
+    group root input inet
+    seclabel u:r:su:s0
+    setenv CLASSPATH /vendor/oila/remote.jar
+    disabled
+
+on property:sys.boot_completed=1
+    start oila_remote

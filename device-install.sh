@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Install (or remove) the system-level pieces on the Premier TV6681 over root adb:
 #   /vendor/etc/init/oila-remote-fix.rc        remote works after a cold boot
+#   /vendor/etc/init/oila-remote.rc + /vendor/oila/remote.jar   phone remote: root input daemon
 #   /vendor/overlay/KtcSettingEn/*.apk          English text for the vendor developer panel
 #   /vendor/overlay/OilaPower.apk               hold the power button = full power-off
 #     (top level: the boot-time scan for framework overlays does not look into subfolders)
@@ -18,6 +19,8 @@ cd "$(dirname "$0")"
 adb -s "$S" root >/dev/null; sleep 3; adb connect "$S" >/dev/null
 A="adb -s $S shell"
 RC=/vendor/etc/init/oila-remote-fix.rc
+REMOTE_RC=/vendor/etc/init/oila-remote.rc
+REMOTE_JAR=/vendor/oila/remote.jar
 OV=/vendor/overlay/KtcSettingEn
 PW=/vendor/overlay/OilaPower.apk
 SV=/vendor/overlay/OilaSystemUi
@@ -39,7 +42,12 @@ case $MODE in
   apply)
     overlays/build.sh >/dev/null
     tools/fapi/build.sh >/dev/null
+    tools/remote/build.sh >/dev/null
     adb -s "$S" push device/oila-remote-fix.rc "$RC" >/dev/null
+    adb -s "$S" push device/oila-remote.rc "$REMOTE_RC" >/dev/null
+    $A mkdir -p /vendor/oila
+    adb -s "$S" push tools/remote/build/remote.jar "$REMOTE_JAR" >/dev/null
+    $A "chmod 644 $REMOTE_RC $REMOTE_JAR; chmod 755 /vendor/oila; restorecon -R $REMOTE_RC $REMOTE_JAR /vendor/oila"
     $A mkdir -p "$OV" "$SV"; $A rm -rf /vendor/overlay/OilaPower
     adb -s "$S" push overlays/ktc-setting-en/build/ktc-setting-en.apk "$OV/KtcSettingEn.apk" >/dev/null
     adb -s "$S" push overlays/android-power/build/android-power.apk "$PW" >/dev/null
@@ -57,7 +65,7 @@ case $MODE in
     $A "sed -i 's/^MUSIC_ON = 1;/MUSIC_ON = 0;/' $TVCFG/boot.ini"
     ;;
   rollback)
-    $A "rm -f $RC $PW; rm -rf $OV $SV /vendor/overlay/OilaPower"
+    $A "rm -f $RC $REMOTE_RC $REMOTE_JAR $PW; rm -rf $OV $SV /vendor/oila /vendor/overlay/OilaPower"
     $A "[ -e $VIDEO.bak.oila ] && cp -p $VIDEO.bak.oila $VIDEO || true"
     $A "[ -e $TVCFG/boot.ini.bak.oila ] && cp -p $TVCFG/boot.ini.bak.oila $TVCFG/boot.ini || true"
     $A "[ -e $LOGO_SRC.bak.oila ] && cp -p $LOGO_SRC.bak.oila $LOGO_SRC || true"
