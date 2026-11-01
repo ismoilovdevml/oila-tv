@@ -17,10 +17,11 @@ HOME_STOCK=com.ktc.mslauncher/.MainActivity
 #   ktc.assistant             = cleaner app (replaced by the Boost screen)
 #   ktc.media                 = media player + scanner (replaced by the Gallery screen)
 #   airoha / mediatek.autopair = Bluetooth updater / remote pairing (this TV has no Bluetooth)
-#   ecloud.emedia             = DLNA renderer
+#   ecloud.emedia             = DLNA renderer (EShare suite)
+#   ecloud.eshare.server / eairplay = screen-mirroring receivers (EShare/AirPlay), always listening
 TRIM="com.zeasn.deviceportal.asdprovider.ktc com.zeasn.services.general com.ktc.serialport com.ktc.mslauncher \
 android.systemupdate.service com.ktc.assistant com.ktc.media com.airoha.android.bluetoothlegatt \
-com.mediatek.autopair com.ecloud.emedia"
+com.mediatek.autopair com.ecloud.emedia com.ecloud.eshare.server com.ecloud.eairplay"
 ANIM="window_animation_scale transition_animation_scale animator_duration_scale"
 
 case $MODE in
