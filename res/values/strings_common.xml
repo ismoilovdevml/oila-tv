@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Words shared by every screen: the key-hint footer and generic actions. Default = Uzbek (Latin). -->
+<resources>
+    <string name="common_move">yurish</string>
+    <string name="common_select">tanlash</string>
+    <string name="common_open">ochish</string>
+    <string name="common_back">orqaga</string>
+    <string name="common_scroll">ko\'rish</string>
+    <string name="common_close">yopish</string>
+    <string name="common_apply">qo\'llash</string>
+    <string name="common_start">boshlash</string>
+    <string name="common_toggle">yoqish / o\'chirish</string>
+    <string name="common_network">tarmoq</string>
+    <string name="common_connect">ulanish</string>
+    <string name="common_key_green">YASHIL</string>
+    <string name="common_cannot_open">%1$s: ochib bo\'lmadi</string>
+</resources>

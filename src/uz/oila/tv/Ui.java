@@ -129,7 +129,7 @@ final class Ui {
                 // try the next candidate
             }
         }
-        Toast.makeText(a, what + ": ochib bo'lmadi", Toast.LENGTH_LONG).show();
+        Toast.makeText(a, a.getString(R.string.common_cannot_open, what), Toast.LENGTH_LONG).show();
     }
 
     /** Fixed-size view that draws one glyph inside its padding. */

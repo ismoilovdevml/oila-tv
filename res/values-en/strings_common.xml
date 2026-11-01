@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_move">move</string>
+    <string name="common_select">select</string>
+    <string name="common_open">open</string>
+    <string name="common_back">back</string>
+    <string name="common_scroll">scroll</string>
+    <string name="common_close">close</string>
+    <string name="common_apply">apply</string>
+    <string name="common_start">start</string>
+    <string name="common_toggle">on / off</string>
+    <string name="common_network">network</string>
+    <string name="common_connect">connect</string>
+    <string name="common_key_green">GREEN</string>
+    <string name="common_cannot_open">%1$s: could not open</string>
+</resources>

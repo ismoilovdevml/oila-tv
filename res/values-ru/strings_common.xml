@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_move">навигация</string>
+    <string name="common_select">выбрать</string>
+    <string name="common_open">открыть</string>
+    <string name="common_back">назад</string>
+    <string name="common_scroll">прокрутка</string>
+    <string name="common_close">закрыть</string>
+    <string name="common_apply">применить</string>
+    <string name="common_start">начать</string>
+    <string name="common_toggle">вкл / выкл</string>
+    <string name="common_network">сеть</string>
+    <string name="common_connect">подключить</string>
+    <string name="common_key_green">ЗЕЛЁНАЯ</string>
+    <string name="common_cannot_open">%1$s: не удалось открыть</string>
+</resources>
