@@ -27,6 +27,7 @@ public final class HomeActivity extends Activity {
         super.onCreate(state);
         setContentView(buildUi());
         tiles[0].requestFocus();
+        PhoneLink.start(this);
     }
 
     @Override
@@ -41,6 +42,7 @@ public final class HomeActivity extends Activity {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm == null ? null : cm.getActiveNetworkInfo();
         wifi.setAlpha(ni != null && ni.isConnected() ? 1f : 0.25f);
+        PhoneLink.restoreKeyboard(this);
     }
 
     @Override

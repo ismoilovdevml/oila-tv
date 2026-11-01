@@ -43,6 +43,10 @@ case $MODE in
     # This firmware drops every remote key until persist.sys.bootanim_exit=1, which only
     # its first-run wizard sets; SurfaceFlinger clears it on each cold boot.
     $A setprop persist.sys.bootanim_exit 1
+    # Phone-typing keyboard (QR code + LAN page) as the default input method. Right after an
+    # install the input-method service may not know the package yet: re-run apply if this fails.
+    $A ime enable uz.oila.tv/.PhoneKeyboard
+    $A ime set uz.oila.tv/.PhoneKeyboard
     ;;
   rollback)
     for p in $TRIM; do $A pm enable $p; done
@@ -50,6 +54,8 @@ case $MODE in
     for k in $ANIM; do $A settings put global $k 1.0; done
     $A settings delete secure enabled_accessibility_services
     $A settings put secure accessibility_enabled 0
+    $A ime set com.android.inputmethod.latin/.LatinIME
+    $A ime disable uz.oila.tv/.PhoneKeyboard
     ;;
   *) echo "mode must be apply|rollback" >&2; exit 2 ;;
 esac

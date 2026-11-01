@@ -22,9 +22,10 @@ public final class SettingsActivity extends Activity {
                 new Tile(this, "Til", "O'zbekcha, Русский, English", Glyphs.LANGUAGE, 0xFF66A0F2, 0xFF2F63DD),
                 new Tile(this, "Sana va vaqt", "Soat, 24 soat", Glyphs.CLOCK, 0xFFF4B068, 0xFFE57C33),
                 new Tile(this, "Tezlashtirish", "Xotira, internet tezligi", Glyphs.BOOST, 0xFF6FE3A5, 0xFF2FA86B),
-                new Tile(this, "Televizor haqida", "Model, xotira, IP", Glyphs.INFO, 0xFFBD7CEA, 0xFF8538D2) };
+                new Tile(this, "Televizor haqida", "Model, xotira, IP", Glyphs.INFO, 0xFFBD7CEA, 0xFF8538D2),
+                new Tile(this, "Telefon", "Telefondan yozish", Glyphs.PHONE, 0xFFF27B9B, 0xFFD23A68) };
         final Class<?>[] screens = { WifiActivity.class, LanguageActivity.class, DateTimeActivity.class,
-                BoostActivity.class, AboutActivity.class };
+                BoostActivity.class, AboutActivity.class, PhoneActivity.class };
         for (int i = 0; i < tiles.length; i++) {
             final int index = i;
             tiles[i].setOnClickListener(new View.OnClickListener() {
@@ -35,7 +36,7 @@ public final class SettingsActivity extends Activity {
         }
         // The vendor menu (factory reset etc.) stays reachable only from About, away from daily use.
         root.addView(Ui.tileRow(this, tiles[0], tiles[1], tiles[2]), Ui.weighted(22));
-        root.addView(Ui.tileRow(this, tiles[3], tiles[4]), Ui.weighted(22));
+        root.addView(Ui.tileRow(this, tiles[3], tiles[4], tiles[5]), Ui.weighted(22));
 
         LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(-1, 52);
         footLp.topMargin = 14;

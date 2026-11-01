@@ -19,8 +19,10 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -201,12 +203,13 @@ public final class WifiActivity extends Activity {
         pw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         pw.setTextSize(TypedValue.COMPLEX_UNIT_PX, 32);
         pw.setSingleLine(true);
+        pw.setImeOptions(EditorInfo.IME_ACTION_GO);
         pw.setHint(saved != null ? "Saqlangan parol uchun bo'sh qoldiring" : "Parol");
         LinearLayout box = new LinearLayout(this);
         box.setPadding(40, 16, 40, 0);
         box.addView(pw, new LinearLayout.LayoutParams(-1, -2));
 
-        AlertDialog d = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
+        final AlertDialog d = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
                 .setTitle(r.SSID)
                 .setView(box)
                 .setPositiveButton("Ulanish", new DialogInterface.OnClickListener() {
@@ -224,6 +227,14 @@ public final class WifiActivity extends Activity {
                 })
                 .setNegativeButton("Bekor qilish", null)
                 .create();
+        // Enter from the phone page (or the keyboard's Go key) presses "Ulanish".
+        pw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent e) {
+                if (actionId != EditorInfo.IME_ACTION_GO) return false;
+                d.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+                return true;
+            }
+        });
         d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         d.show();
         pw.requestFocus();

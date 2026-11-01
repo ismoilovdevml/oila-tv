@@ -10,7 +10,7 @@ import android.graphics.Typeface;
 final class Glyphs {
     static final int NONE = -1, YOUTUBE = 0, LIVE_TV = 1, SOURCE = 2, NETFLIX = 3, WIFI = 4,
             GALLERY = 5, SETTINGS = 6, HOME = 7, LANGUAGE = 8, CLOCK = 9, BLUETOOTH = 10,
-            STORAGE = 11, INFO = 12, SLIDERS = 13, LOCK = 14, APPS = 15, NO_SIGNAL = 16, MUSIC = 17, BOOST = 18;
+            STORAGE = 11, INFO = 12, SLIDERS = 13, LOCK = 14, APPS = 15, NO_SIGNAL = 16, MUSIC = 17, BOOST = 18, PHONE = 19;
 
     private static final Paint solid = new Paint(Paint.ANTI_ALIAS_FLAG);
     private static final Paint line = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -207,6 +207,11 @@ final class Glyphs {
                     r.set(gx, gy, gx + 20, gy + 20);
                     c.drawRoundRect(r, 6, 6, solid);
                 }
+                break;
+            case PHONE:
+                r.set(15, 3, 41, 53);
+                c.drawRoundRect(r, 7, 7, line);
+                c.drawLine(24, 44, 32, 44, line);
                 break;
             case LOCK:
                 r.set(10, 26, s - 10, s - 6);
