@@ -39,6 +39,11 @@ public final class PhoneActivity extends Activity {
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
             lp.topMargin = 24;
             steps.addView(Ui.label(this, url, 22, Ui.TEXT_DIM, Typeface.NORMAL), lp);
+            // Android 17 silently blocks home-network pages for browsers until this is allowed.
+            LinearLayout.LayoutParams hl = new LinearLayout.LayoutParams(-2, -2);
+            hl.topMargin = 12;
+            steps.addView(Ui.label(this, "Ochilmasa: telefon Sozlamalari → Ilovalar → Chrome → Ruxsatlar →"
+                    + " Yaqin-atrofdagi qurilmalar → Ruxsat berish", 20, Ui.TEXT_DIM, Typeface.NORMAL), hl);
         }
         body.addView(steps, new LinearLayout.LayoutParams(0, -2, 1f));
         root.addView(body, Ui.weighted(22));

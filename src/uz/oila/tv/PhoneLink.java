@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Tiny web server on the home network: a phone opens its page (from the QR code) and types into
@@ -32,8 +33,9 @@ final class PhoneLink implements Runnable {
     static final int PORT = 8765;
     static final String KEYBOARD = "uz.oila.tv/.PhoneKeyboard";
     private static final String TAG = "OilaPhone";
-    private static final int MAX_BODY = 4096;
+    private static final int MAX_BODY = 4096, MAX_OPEN = 16, IDLE_MS = 60000;
     private static PhoneLink running;
+    private final AtomicInteger open = new AtomicInteger();
 
     /** Where phone text goes; set by PhoneKeyboard while a TV text field has input focus. */
     interface Target {
@@ -110,12 +112,19 @@ final class PhoneLink implements Runnable {
     public void run() {
         try (ServerSocket server = new ServerSocket(PORT)) {
             while (true) {
-                try (Socket s = server.accept()) {
-                    s.setSoTimeout(5000);
-                    handle(s.getInputStream(), s.getOutputStream());
-                } catch (IOException e) {
-                    Log.w(TAG, "request failed: " + e);
+                final Socket s = server.accept();
+                // One thread per connection: browsers open spare connections ahead of time and
+                // send nothing on them, which must not hold up the real request.
+                if (open.incrementAndGet() > MAX_OPEN) {
+                    open.decrementAndGet();
+                    s.close();
+                    continue;
                 }
+                Thread t = new Thread(new Runnable() {
+                    @Override public void run() { serve(s); }
+                }, "phone-link-conn");
+                t.setDaemon(true);
+                t.start();
             }
         } catch (IOException e) {
             Log.e(TAG, "cannot listen on " + PORT + ": " + e);
@@ -123,9 +132,27 @@ final class PhoneLink implements Runnable {
         }
     }
 
-    private void handle(InputStream in, OutputStream out) throws IOException {
-        String[] request = line(in).split(" ");
-        if (request.length < 2) return;
+    private void serve(Socket s) {
+        try {
+            // A spare connection may wait while the user confirms the link on the phone.
+            s.setSoTimeout(IDLE_MS);
+            handle(s.getInputStream(), s.getOutputStream(), s.getInetAddress().getHostAddress());
+            s.shutdownOutput();
+        } catch (IOException e) {
+            Log.w(TAG, s.getInetAddress().getHostAddress() + " request failed: " + e);
+        } finally {
+            try { s.close(); } catch (IOException ignored) { /* already closed */ }
+            open.decrementAndGet();
+        }
+    }
+
+    private void handle(InputStream in, OutputStream out, String from) throws IOException {
+        String first = line(in);
+        String[] request = first.split(" ");
+        if (request.length < 2) {
+            Log.w(TAG, from + " not HTTP: " + first.substring(0, Math.min(first.length(), 24)));
+            return;
+        }
         int length = 0;
         for (String h = line(in); !h.isEmpty(); h = line(in)) {
             if (h.regionMatches(true, 0, "content-length:", 0, 15)) length = Integer.parseInt(h.substring(15).trim());
@@ -146,6 +173,7 @@ final class PhoneLink implements Runnable {
         int q = target.indexOf('?');
         String path = q < 0 ? target : target.substring(0, q);
         String key = q < 0 ? "" : param(target.substring(q + 1), "k");
+        Log.i(TAG, from + " " + request[0] + " " + path);
         if (!MessageDigest.isEqual(key.getBytes(StandardCharsets.UTF_8), token)) {
             reply(out, "403 Forbidden", "text/html", PAGE_DENIED);
             return;
@@ -214,7 +242,7 @@ final class PhoneLink implements Runnable {
 
     private static final String STYLE = "<meta charset=utf-8><meta name=viewport content='width=device-width,"
             + "initial-scale=1'><title>Oila TV</title><style>body{margin:0;padding:20px;background:#0d1018;"
-            + "color:#fff;font:18px system-ui,sans-serif}h1{font-size:22px;margin:0 0 14px}textarea{width:100%;"
+            + "color:#fff;font:18px system-ui,sans-serif}h1{font-size:22px;margin:0 0 14px}textarea{width:100%;font:inherit;"
             + "box-sizing:border-box;height:100px;padding:12px;font-size:22px;color:#fff;background:#171c2a;"
             + "border:2px solid #2a3142;border-radius:12px}button{display:block;width:100%;margin-top:12px;"
             + "padding:16px;font-size:20px;font-weight:700;color:#fff;border:0;border-radius:12px}"
