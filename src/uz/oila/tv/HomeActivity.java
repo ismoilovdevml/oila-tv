@@ -9,8 +9,10 @@ import android.media.tv.TvInputInfo;
 import android.media.tv.TvInputManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 public final class HomeActivity extends Activity {
@@ -25,6 +27,10 @@ public final class HomeActivity extends Activity {
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        // This panel can stay dark after a cold boot although the system is awake; asking the
+        // window to turn the screen on nudges the vendor display to actually power up.
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        if (Build.VERSION.SDK_INT >= 27) setTurnScreenOn(true);
         setContentView(buildUi());
         tiles[0].requestFocus();
         PhoneLink.start(this);

@@ -2,6 +2,7 @@ package uz.oila.tv;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -11,7 +12,10 @@ import android.view.accessibility.AccessibilityEvent;
  */
 public final class KeyService extends AccessibilityService {
     private static final String YOUTUBE = "com.google.android.youtube.tv";
+    // The live-TV player owns MENU (picture/sound, channel scan), so we let MENU through there.
+    private static final String TV_PLAYER = "com.ktc.tvplayer";
     private VolumePanel volume;
+    private volatile CharSequence foreground = "";
 
     @Override
     protected void onServiceConnected() {
@@ -29,6 +33,7 @@ public final class KeyService extends AccessibilityService {
         Intent target;
         switch (e.getKeyCode()) {
             case KeyEvent.KEYCODE_MENU:
+                if (TextUtils.equals(foreground, TV_PLAYER)) return false; // its own menu
                 if (e.getAction() == KeyEvent.ACTION_DOWN && e.getRepeatCount() == 0) {
                     performGlobalAction(GLOBAL_ACTION_HOME);
                 }
@@ -53,7 +58,13 @@ public final class KeyService extends AccessibilityService {
     }
 
     @Override
-    public void onAccessibilityEvent(AccessibilityEvent event) {}
+    public void onAccessibilityEvent(AccessibilityEvent event) {
+        // Remember which app is in front so MENU can defer to the live-TV player.
+        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
+                && event.getPackageName() != null) {
+            foreground = event.getPackageName();
+        }
+    }
 
     @Override
     public void onInterrupt() {}
