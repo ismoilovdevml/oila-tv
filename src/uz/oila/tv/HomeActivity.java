@@ -115,14 +115,21 @@ public final class HomeActivity extends Activity {
         root.addView(header, new LinearLayout.LayoutParams(-1, 72));
 
         tiles = new Tile[] {
-                new Tile(this, "YouTube", "Video va mult", Glyphs.YOUTUBE, 0xFFEE6B5F, 0xFFCF3429),
-                new Tile(this, "Jonli TV", "Efir kanallari", Glyphs.LIVE_TV, 0xFF66A0F2, 0xFF2F63DD),
-                new Tile(this, "Qurilma", "HDMI / Pristavka", Glyphs.SOURCE, 0xFF968AF3, 0xFF5548DD),
-                new Tile(this, "Netflix", "Kino va serial", Glyphs.NETFLIX, 0xFFC4393C, 0xFF8A1A1E),
-                new Tile(this, "Wi-Fi", "Tarmoqqa ulanish", Glyphs.WIFI, 0xFF74D0BC, 0xFF41A08C),
-                new Tile(this, "Galereya", "USB: video, rasm", Glyphs.GALLERY, 0xFFBD7CEA, 0xFF8538D2),
-                new Tile(this, "Sozlamalar", "Til, vaqt, ekran", Glyphs.SETTINGS, 0xFF8F98AB, 0xFF596174),
-                new Tile(this, "Ilovalar", "Barcha ilovalar", Glyphs.APPS, 0xFF5CB8E8, 0xFF2D7FC0) };
+                new Tile(this, "YouTube", getString(R.string.home_youtube_sub), Glyphs.YOUTUBE,
+                        0xFFEE6B5F, 0xFFCF3429),
+                new Tile(this, getString(R.string.home_live_tv), getString(R.string.home_live_tv_sub),
+                        Glyphs.LIVE_TV, 0xFF66A0F2, 0xFF2F63DD),
+                new Tile(this, getString(R.string.home_source), getString(R.string.home_source_sub),
+                        Glyphs.SOURCE, 0xFF968AF3, 0xFF5548DD),
+                new Tile(this, "Netflix", getString(R.string.home_netflix_sub), Glyphs.NETFLIX,
+                        0xFFC4393C, 0xFF8A1A1E),
+                new Tile(this, "Wi-Fi", getString(R.string.home_wifi_sub), Glyphs.WIFI, 0xFF74D0BC, 0xFF41A08C),
+                new Tile(this, getString(R.string.home_gallery), getString(R.string.home_gallery_sub),
+                        Glyphs.GALLERY, 0xFFBD7CEA, 0xFF8538D2),
+                new Tile(this, getString(R.string.home_settings), getString(R.string.home_settings_sub),
+                        Glyphs.SETTINGS, 0xFF8F98AB, 0xFF596174),
+                new Tile(this, getString(R.string.home_apps), getString(R.string.home_apps_sub),
+                        Glyphs.APPS, 0xFF5CB8E8, 0xFF2D7FC0) };
         for (int i = 0; i < tiles.length; i++) {
             final int index = i;
             tiles[i].setOnClickListener(new View.OnClickListener() {
@@ -135,7 +142,9 @@ public final class HomeActivity extends Activity {
 
         LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(-1, 52);
         footLp.topMargin = 14;
-        root.addView(Ui.footer(this, "◀ ▲ ▼ ▶", "yurish", "OK", "tanlash", "YASHIL", "YouTube qidiruv"), footLp);
+        root.addView(Ui.footer(this, "◀ ▲ ▼ ▶", getString(R.string.common_move),
+                "OK", getString(R.string.common_select),
+                getString(R.string.common_key_green), getString(R.string.home_youtube_search)), footLp);
         return root;
     }
 }

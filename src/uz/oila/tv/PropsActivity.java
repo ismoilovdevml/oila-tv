@@ -13,7 +13,7 @@ public final class PropsActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.SLIDERS, 0xFF8F98AB, 0xFF596174, "Build properties"),
+        root.addView(Ui.header(this, Glyphs.SLIDERS, 0xFF8F98AB, 0xFF596174, getString(R.string.props_title)),
                 new LinearLayout.LayoutParams(-1, 72));
         LinearLayout col = ListRow.column(this, root);
         ListRow first = null;
@@ -28,10 +28,12 @@ public final class PropsActivity extends Activity {
                     if (first == null) first = row;
                 }
             } catch (Exception e) {
-                ListRow.add(col, new ListRow(this, "Not readable", e.getClass().getSimpleName()));
+                ListRow.add(col, new ListRow(this, getString(R.string.props_not_readable),
+                        e.getClass().getSimpleName()));
             }
         }
-        root.addView(Ui.footer(this, "▲ ▼", "scroll", "BACK", "back"), new LinearLayout.LayoutParams(-1, 52));
+        root.addView(Ui.footer(this, "▲ ▼", getString(R.string.common_scroll), "BACK",
+                getString(R.string.common_back)), new LinearLayout.LayoutParams(-1, 52));
         setContentView(root);
         if (first != null) first.requestFocus();
     }

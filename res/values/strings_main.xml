@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Home, settings hub, sources, apps, language, date/time and the gallery/player screens.
+     Default = Uzbek (Latin). Screen titles are defined once (home_*, settings_*) and reused as
+     the header of the screen they open. -->
+<resources>
+    <!-- Home tiles -->
+    <string name="home_youtube_sub">Video va mult</string>
+    <string name="home_live_tv">Jonli TV</string>
+    <string name="home_live_tv_sub">Efir kanallari</string>
+    <string name="home_source">Qurilma</string>
+    <string name="home_source_sub">HDMI / Pristavka</string>
+    <string name="home_netflix_sub">Kino va serial</string>
+    <string name="home_wifi_sub">Tarmoqqa ulanish</string>
+    <string name="home_gallery">Galereya</string>
+    <string name="home_gallery_sub">USB: video, rasm</string>
+    <string name="home_settings">Sozlamalar</string>
+    <string name="home_settings_sub">Til, vaqt, ekran</string>
+    <string name="home_apps">Ilovalar</string>
+    <string name="home_apps_sub">Barcha ilovalar</string>
+    <string name="home_youtube_search">YouTube qidiruv</string>
+
+    <!-- Settings tiles -->
+    <string name="settings_language">Til</string>
+    <string name="settings_datetime">Sana va vaqt</string>
+    <string name="settings_datetime_sub">Soat, 24 soat</string>
+    <string name="settings_boost">Tezlashtirish</string>
+    <string name="settings_boost_sub">Xotira, internet tezligi</string>
+    <string name="settings_about">Televizor haqida</string>
+    <string name="settings_about_sub">Model, xotira, IP</string>
+    <string name="settings_phone">Telefon</string>
+    <string name="settings_phone_sub">Telefondan yozish</string>
+
+    <!-- Input sources -->
+    <string name="source_antenna">Antenna TV</string>
+    <string name="source_av_sub">Sariq-oq-qizil kabel</string>
+    <string name="source_hdmi1_sub">Pristavka, konsol</string>
+    <string name="source_hdmi2_sub">Noutbuk, pleyer</string>
+
+    <!-- No channels stored -->
+    <string name="nochannels_title">Kanallar topilmadi</string>
+    <string name="nochannels_steps">"1.  Antenna kabelini televizor orqasidagi ANT uyasiga ulang\n2.  «Kanallarni qidirish»ni bosing, so\'ng pultda MENU → CH → Avtomatik sozlash"</string>
+    <string name="nochannels_scan">Kanallarni qidirish</string>
+    <string name="nochannels_scan_sub">Antenna ulangandan keyin</string>
+    <string name="nochannels_scan_hint">Pultda MENU → CH → Avtomatik sozlash</string>
+
+    <!-- Language -->
+    <string name="language_choose">Televizor tilini tanlang</string>
+    <string name="language_selected">Tanlangan</string>
+    <string name="language_no_permission">Tilni o\'zgartirishga ruxsat yo\'q</string>
+
+    <!-- Date and time -->
+    <string name="datetime_auto">Vaqtni internetdan olish</string>
+    <string name="datetime_24h">24 soatlik format</string>
+    <string name="datetime_zone">Vaqt mintaqasi</string>
+    <string name="datetime_uzbekistan">O\'zbekiston</string>
+    <string name="datetime_no_permission">Bu sozlamani o\'zgartirishga ruxsat yo\'q</string>
+
+    <!-- Gallery -->
+    <string name="media_photos">Rasmlar</string>
+    <string name="media_videos">Videolar</string>
+    <string name="media_music">Musiqa</string>
+    <string name="media_no_permission">Ruxsat yo\'q</string>
+    <string name="media_none_yet">Hali yo\'q</string>
+    <plurals name="media_count">
+        <item quantity="one">%1$d ta</item>
+        <item quantity="other">%1$d ta</item>
+    </plurals>
+    <string name="media_usb_connected">USB fleshka ulangan (%1$d)</string>
+    <string name="media_usb_none">USB fleshka ulanmagan</string>
+    <string name="media_internal_free">Ichki xotira: %1$.1f GB bo\'sh</string>
+    <string name="media_list_empty">Bu yerda hali hech narsa yo\'q.\nUSB fleshkani televizorga ulang.</string>
+
+    <!-- Player -->
+    <string name="player_cannot_open">Bu faylni ochib bo\'lmadi</string>
+    <string name="player_paused">Pauza</string>
+</resources>

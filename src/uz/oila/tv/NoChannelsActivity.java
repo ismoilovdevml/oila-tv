@@ -52,7 +52,7 @@ public final class NoChannelsActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.LIVE_TV, 0xFF66A0F2, 0xFF2F63DD, "Jonli TV"),
+        root.addView(Ui.header(this, Glyphs.LIVE_TV, 0xFF66A0F2, 0xFF2F63DD, getString(R.string.home_live_tv)),
                 new LinearLayout.LayoutParams(-1, 72));
 
         LinearLayout card = new LinearLayout(this);
@@ -66,14 +66,11 @@ public final class NoChannelsActivity extends Activity {
 
         card.addView(new Ui.GlyphView(this, Glyphs.NO_SIGNAL, 0xFF9AB8F2, 0xFF1C2232),
                 new LinearLayout.LayoutParams(84, 84));
-        TextView title = Ui.label(this, "Kanallar topilmadi", 38, Ui.TEXT, Typeface.BOLD);
+        TextView title = Ui.label(this, getString(R.string.nochannels_title), 38, Ui.TEXT, Typeface.BOLD);
         LinearLayout.LayoutParams tl = new LinearLayout.LayoutParams(-2, -2);
         tl.topMargin = 18;
         card.addView(title, tl);
-        TextView body = Ui.label(this,
-                "1.  Antenna kabelini televizor orqasidagi ANT uyasiga ulang\n"
-                        + "2.  «Kanallarni qidirish»ni bosing, so'ng pultda MENU → CH → Avtomatik sozlash",
-                23, Ui.TEXT_SOFT, Typeface.NORMAL);
+        TextView body = Ui.label(this, getString(R.string.nochannels_steps), 23, Ui.TEXT_SOFT, Typeface.NORMAL);
         body.setLineSpacing(12, 1);
         LinearLayout.LayoutParams bl = new LinearLayout.LayoutParams(-2, -2);
         bl.topMargin = 16;
@@ -83,21 +80,20 @@ public final class NoChannelsActivity extends Activity {
         cl.topMargin = 22;
         root.addView(card, cl);
 
-        Tile scan = new Tile(this, "Kanallarni qidirish", "Antenna ulangandan keyin", Glyphs.LIVE_TV,
-                0xFF66A0F2, 0xFF2F63DD, 28f).centered();
-        Tile source = new Tile(this, "Qurilma", "HDMI / Pristavka", Glyphs.SOURCE,
-                0xFF968AF3, 0xFF5548DD, 28f).centered();
-        Tile youtube = new Tile(this, "YouTube", "Video va mult", Glyphs.YOUTUBE,
+        Tile scan = new Tile(this, getString(R.string.nochannels_scan), getString(R.string.nochannels_scan_sub),
+                Glyphs.LIVE_TV, 0xFF66A0F2, 0xFF2F63DD, 28f).centered();
+        Tile source = new Tile(this, getString(R.string.home_source), getString(R.string.home_source_sub),
+                Glyphs.SOURCE, 0xFF968AF3, 0xFF5548DD, 28f).centered();
+        Tile youtube = new Tile(this, "YouTube", getString(R.string.home_youtube_sub), Glyphs.YOUTUBE,
                 0xFFEE6B5F, 0xFFCF3429, 28f).centered();
         scan.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Toast.makeText(NoChannelsActivity.this, "Pultda MENU → CH → Avtomatik sozlash",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(NoChannelsActivity.this, R.string.nochannels_scan_hint, Toast.LENGTH_LONG).show();
                 // Antenna mode first, so the player's own scan searches the air, not cable.
                 sendBroadcast(new Intent(SourceActivity.TV).putExtra("tunerMode", "dvbt").setComponent(
                         new ComponentName(SourceActivity.TV_PLAYER,
                                 "com.ktc.tvplayer.activity.receiver.SourceReceiver")));
-                Ui.start(NoChannelsActivity.this, "Jonli TV", new Intent(Intent.ACTION_MAIN)
+                Ui.start(NoChannelsActivity.this, getString(R.string.home_live_tv), new Intent(Intent.ACTION_MAIN)
                         .setComponent(new ComponentName(SourceActivity.TV_PLAYER, SourceActivity.TV_PLAYER_ROOT)));
             }
         });
@@ -117,7 +113,8 @@ public final class NoChannelsActivity extends Activity {
 
         LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(-1, 52);
         footLp.topMargin = 14;
-        root.addView(Ui.footer(this, "◀ ▶", "tanlash", "OK", "ochish", "BACK", "orqaga"), footLp);
+        root.addView(Ui.footer(this, "◀ ▶", getString(R.string.common_select),
+                "OK", getString(R.string.common_open), "BACK", getString(R.string.common_back)), footLp);
         setContentView(root);
         scan.requestFocus();
     }

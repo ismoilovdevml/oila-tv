@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phone typing: the TV's QR keyboard, the QR screen, YouTube search and the phone web page. -->
+<resources>
+    <string name="keyboard_title">Telefoningizda yozing</string>
+    <string name="keyboard_body">Telefon kamerasini QR kodga qarating va ochilgan sahifada yozing.</string>
+    <string name="keyboard_remote">pult bilan yozish</string>
+
+    <string name="phone_title">Telefondan yozish</string>
+    <string name="phone_offline_title">Televizor tarmoqqa ulanmagan</string>
+    <string name="phone_offline_body">Avval Sozlamalar → Wi-Fi orqali ulaning.</string>
+    <string name="phone_heading">Telefon bilan yozing va qidiring</string>
+    <string name="phone_step1">1. Telefon va televizor bitta Wi-Fi\'da bo\'lsin.</string>
+    <string name="phone_step2">2. Telefon kamerasini QR kodga qarating.</string>
+    <string name="phone_step3">3. Ochilgan sahifada yozing: YouTube\'da izlash yoki TV\'dagi maydonga.</string>
+    <string name="phone_step4">4. Sahifani telefonda saqlab qo\'ying — keyingi safar QR kerak emas.</string>
+    <string name="phone_blocked_hint">Ochilmasa: telefon Sozlamalari → Ilovalar → Chrome → Ruxsatlar → Yaqin-atrofdagi qurilmalar → Ruxsat berish</string>
+
+    <string name="search_title">YouTube\'da qidirish</string>
+    <string name="search_field_hint">Masalan: multfilm, yangiliklar, qo\'shiqlar</string>
+    <string name="search_help">Telefonda yozib \"TV\'ga yuborish\"ni bosing. Pult bilan: OK, yozing, keyin o\'ngdagi lupa tugmasi.</string>
+
+    <string name="page_title">Oila TV — telefondan yozish</string>
+    <string name="page_placeholder">Shu yerga yozing...</string>
+    <string name="page_youtube">YouTube\'da izlash</string>
+    <string name="page_send">TV\'ga yuborish (Enter)</string>
+    <string name="page_clear">Tozalash</string>
+    <string name="page_typing">TV\'da yozilmoqda</string>
+    <string name="page_nofield">TV\'da yozish maydoni yo\'q — YouTube\'da izlash tugmasini bosing</string>
+    <string name="page_offline">Televizor bilan aloqa yo\'q. Telefon va TV bitta Wi-Fi\'dami?</string>
+    <string name="page_noapp">YouTube ochilmadi</string>
+    <string name="page_searching">YouTube\'da qidirilmoqda</string>
+    <string name="page_sent">Yuborildi</string>
+    <string name="page_denied_title">Kirish kodi noto\'g\'ri</string>
+    <string name="page_denied_body">Televizordagi QR kodni qaytadan skanerlang: Sozlamalar → Telefon.</string>
+</resources>

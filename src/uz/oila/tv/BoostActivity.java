@@ -31,21 +31,22 @@ public final class BoostActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.BOOST, 0xFF6FE3A5, 0xFF2FA86B, "Tezlashtirish"),
+        root.addView(Ui.header(this, Glyphs.BOOST, 0xFF6FE3A5, 0xFF2FA86B, getString(R.string.boost_title)),
                 new LinearLayout.LayoutParams(-1, 72));
         LinearLayout col = ListRow.column(this, root);
-        ListRow.section(col, "Televizor sekinlashsa, shu tugmani bosing");
-        memory = ListRow.add(col, new ListRow(this, "Xotirani bo'shatish", "").onClick(new View.OnClickListener() {
+        ListRow.section(col, getString(R.string.boost_memory_hint));
+        memory = ListRow.add(col, new ListRow(this, getString(R.string.boost_free_memory), "").onClick(new View.OnClickListener() {
             @Override public void onClick(View v) { freeMemory(); }
         }));
-        ListRow.section(col, "YouTube qotib qolsa, internetni tekshiring");
-        speed = ListRow.add(col, new ListRow(this, "Internet tezligini o'lchash", "").onClick(new View.OnClickListener() {
+        ListRow.section(col, getString(R.string.boost_internet_hint));
+        speed = ListRow.add(col, new ListRow(this, getString(R.string.boost_speed_test), "").onClick(new View.OnClickListener() {
             @Override public void onClick(View v) { testSpeed(); }
         }));
-        root.addView(Ui.footer(this, "▲ ▼", "tanlash", "OK", "boshlash", "BACK", "orqaga"),
+        root.addView(Ui.footer(this, "▲ ▼", getString(R.string.common_select), "OK",
+                getString(R.string.common_start), "BACK", getString(R.string.common_back)),
                 new LinearLayout.LayoutParams(-1, 52));
         setContentView(root);
-        memory.set(freeMb() + " MB bo'sh", Ui.TEXT_DIM);
+        memory.set(getString(R.string.boost_mb_free, freeMb()), Ui.TEXT_DIM);
         memory.requestFocus();
     }
 
@@ -62,17 +63,17 @@ public final class BoostActivity extends Activity {
             if (p.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND_SERVICE) continue;
             for (String pkg : p.pkgList) if (!KEEP.contains(pkg)) am.killBackgroundProcesses(pkg);
         }
-        memory.set("Tozalanmoqda…", Ui.TEXT_DIM);
+        memory.set(getString(R.string.boost_cleaning), Ui.TEXT_DIM);
         ui.postDelayed(new Runnable() {
             @Override public void run() {
                 long after = freeMb();
-                memory.set("+" + Math.max(0, after - before) + " MB  →  " + after + " MB bo'sh", ListRow.GREEN);
+                memory.set(getString(R.string.boost_freed, Math.max(0, after - before), after), ListRow.GREEN);
             }
         }, 1500);
     }
 
     private void testSpeed() {
-        speed.set("O'lchanmoqda…", Ui.TEXT_DIM);
+        speed.set(getString(R.string.boost_measuring), Ui.TEXT_DIM);
         new Thread(new Runnable() {
             @Override public void run() {
                 String result;
@@ -87,11 +88,11 @@ public final class BoostActivity extends Activity {
                         for (int r; (r = in.read(buf)) > 0; ) n += r;
                     }
                     double mbps = n * 8 / ((System.nanoTime() - t0) / 1e9) / 1e6;
-                    result = String.format("%.1f Mbit/s  —  %s", mbps,
-                            mbps >= 10 ? "YouTube HD uchun yetarli" : mbps >= 3 ? "Oddiy sifat uchun yetarli" : "Sekin");
+                    result = getString(R.string.boost_speed_result, mbps, getString(mbps >= 10 ? R.string.boost_speed_hd
+                            : mbps >= 3 ? R.string.boost_speed_normal : R.string.boost_speed_slow));
                     if (mbps < 3) color = 0xFFFF8A80;
                 } catch (Exception e) {
-                    result = "Internet yo'q";
+                    result = getString(R.string.boost_no_internet);
                     color = 0xFFFF8A80;
                 }
                 final String r = result;

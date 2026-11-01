@@ -77,7 +77,7 @@ public final class PlayerActivity extends Activity {
         });
         video.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override public boolean onError(MediaPlayer mp, int what, int extra) {
-                state.setText("Bu faylni ochib bo'lmadi");
+                state.setText(R.string.player_cannot_open);
                 panel.setVisibility(View.VISIBLE);
                 return true;
             }
@@ -106,7 +106,7 @@ public final class PlayerActivity extends Activity {
             case KeyEvent.KEYCODE_DPAD_CENTER:
             case KeyEvent.KEYCODE_ENTER:
             case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                if (video.isPlaying()) { video.pause(); state.setText("❚❚  Pauza"); }
+                if (video.isPlaying()) { video.pause(); state.setText("❚❚  " + getString(R.string.player_paused)); }
                 else { video.start(); state.setText("▶  " + (index + 1) + " / " + uris.size()); }
                 flash();
                 return true;

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- System screens: Wi-Fi, About, Boost, developer tools, build properties. English. -->
+<resources>
+    <!-- Wi-Fi -->
+    <string name="wifi_on">Wi-Fi on</string>
+    <string name="wifi_off">Wi-Fi off</string>
+    <string name="wifi_ok_to_turn_off">OK to turn off</string>
+    <string name="wifi_ok_to_turn_on">OK to turn on</string>
+    <string name="wifi_state_off">Off</string>
+    <string name="wifi_disabled">Wi-Fi is off</string>
+    <string name="wifi_turn_on_hint">Turn on Wi-Fi to use the internet</string>
+    <string name="wifi_connected">Connected</string>
+    <string name="wifi_not_connected">Not connected</string>
+    <string name="wifi_signal">Signal: %1$s</string>
+    <string name="wifi_signal_excellent">excellent</string>
+    <string name="wifi_signal_good">good</string>
+    <string name="wifi_signal_fair">fair</string>
+    <string name="wifi_signal_weak">weak</string>
+    <string name="wifi_choose_network">Choose a network</string>
+    <string name="wifi_choose_hint">Pick a network in the list on the right and press OK</string>
+    <string name="wifi_list_off">Wi-Fi is off — turn it on with the button on the left</string>
+    <string name="wifi_searching">Looking for networks…</string>
+    <string name="wifi_net_secured">Needs password</string>
+    <string name="wifi_net_open">Open</string>
+    <string name="wifi_already_connected">%1$s — already connected</string>
+    <string name="wifi_unsupported">This type of network is not supported</string>
+    <string name="wifi_password">Password</string>
+    <string name="wifi_password_keep_saved">Leave empty to use the saved password</string>
+    <string name="wifi_password_too_short">The password must be at least 8 characters</string>
+    <string name="wifi_connect">Connect</string>
+    <string name="wifi_cancel">Cancel</string>
+    <string name="wifi_save_failed">%1$s: could not save. Try Settings → About this TV → Factory settings menu</string>
+    <string name="wifi_connecting">%1$s — connecting…</string>
+
+    <!-- About this TV -->
+    <string name="about_title">About this TV</string>
+    <string name="about_device">Device</string>
+    <string name="about_model">Model</string>
+    <string name="about_firmware">Firmware</string>
+    <string name="about_updated">Updated on</string>
+    <string name="about_memory">Memory</string>
+    <string name="about_ram">RAM</string>
+    <string name="about_storage">Storage</string>
+    <string name="about_free_of">%1$s free / %2$s</string>
+    <string name="about_network">Network</string>
+    <string name="about_ip">IP address</string>
+    <string name="about_not_connected">not connected</string>
+    <string name="about_more">More</string>
+    <string name="about_dev_tools">Developer tools</string>
+    <string name="about_dev_tools_hint">For experts</string>
+    <string name="about_factory_menu">Factory settings menu</string>
+    <string name="about_advanced">Advanced</string>
+    <string name="about_settings">Settings</string>
+
+    <!-- Boost -->
+    <string name="boost_title">Speed up</string>
+    <string name="boost_memory_hint">If the TV is slow, press this button</string>
+    <string name="boost_free_memory">Free up memory</string>
+    <string name="boost_internet_hint">If YouTube freezes, check the internet</string>
+    <string name="boost_speed_test">Test internet speed</string>
+    <string name="boost_mb_free">%1$d MB free</string>
+    <string name="boost_cleaning">Cleaning…</string>
+    <string name="boost_freed">+%1$d MB  →  %2$d MB free</string>
+    <string name="boost_measuring">Measuring…</string>
+    <string name="boost_speed_result">%1$.1f Mbit/s  —  %2$s</string>
+    <string name="boost_speed_hd">Good for YouTube HD</string>
+    <string name="boost_speed_normal">Good for normal quality</string>
+    <string name="boost_speed_slow">Slow</string>
+    <string name="boost_no_internet">No internet</string>
+
+    <!-- Developer tools -->
+    <string name="dev_title">Developer tools</string>
+    <string name="dev_software">Software</string>
+    <string name="dev_firmware">Firmware</string>
+    <string name="dev_build_date">Build date</string>
+    <string name="dev_security_patch">Security patch</string>
+    <string name="dev_kernel">Kernel</string>
+    <string name="dev_hardware">Hardware</string>
+    <string name="dev_board">Board</string>
+    <string name="dev_chip">Chip</string>
+    <string name="dev_cpu_value">%1$d cores  ·  %2$s</string>
+    <string name="dev_ram">RAM</string>
+    <string name="dev_storage">Storage</string>
+    <string name="dev_free_of">%1$s free of %2$s</string>
+    <string name="dev_screen">Screen</string>
+    <string name="dev_resolution">Resolution</string>
+    <string name="dev_density">Density</string>
+    <string name="dev_network">Network</string>
+    <string name="dev_status">Status</string>
+    <string name="dev_not_connected">Not connected</string>
+    <string name="dev_interface">Interface</string>
+    <string name="dev_ip">IP address</string>
+    <string name="dev_gateway">Gateway</string>
+    <string name="dev_mac">MAC address</string>
+    <string name="dev_debugging">Debugging</string>
+    <string name="dev_adb">USB / network debugging</string>
+    <string name="dev_tools">Tools</string>
+    <string name="dev_build_props">Build properties</string>
+    <string name="dev_adb_off_title">Turn debugging off?</string>
+    <string name="dev_adb_off_message">Remote maintenance over the network will stop working until it is turned back on here.</string>
+    <string name="dev_turn_off">Turn off</string>
+    <string name="dev_cancel">Cancel</string>
+    <string name="dev_no_permission">No permission to change this setting</string>
+
+    <!-- Build properties -->
+    <string name="props_title">Build properties</string>
+    <string name="props_not_readable">Not readable</string>
+</resources>

@@ -15,7 +15,7 @@ public final class PhoneActivity extends Activity {
         String url = PhoneLink.url(this);
 
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.PHONE, 0xFFF27B9B, 0xFFD23A68, "Telefondan yozish"),
+        root.addView(Ui.header(this, Glyphs.PHONE, 0xFFF27B9B, 0xFFD23A68, getString(R.string.phone_title)),
                 new LinearLayout.LayoutParams(-1, 72));
 
         LinearLayout body = new LinearLayout(this);
@@ -28,27 +28,26 @@ public final class PhoneActivity extends Activity {
         steps.setOrientation(LinearLayout.VERTICAL);
         steps.setPadding(48, 0, 0, 0);
         if (url == null) {
-            steps.addView(Ui.label(this, "Televizor tarmoqqa ulanmagan", 34, Ui.TEXT, Typeface.BOLD));
-            steps.addView(step("Avval Sozlamalar → Wi-Fi orqali ulaning."));
+            steps.addView(Ui.label(this, getString(R.string.phone_offline_title), 34, Ui.TEXT, Typeface.BOLD));
+            steps.addView(step(getString(R.string.phone_offline_body)));
         } else {
-            steps.addView(Ui.label(this, "Telefon bilan yozing va qidiring", 34, Ui.TEXT, Typeface.BOLD));
-            steps.addView(step("1. Telefon va televizor bitta Wi-Fi'da bo'lsin."));
-            steps.addView(step("2. Telefon kamerasini QR kodga qarating."));
-            steps.addView(step("3. Ochilgan sahifada yozing: YouTube'da izlash yoki TV'dagi maydonga."));
-            steps.addView(step("4. Sahifani telefonda saqlab qo'ying — keyingi safar QR kerak emas."));
+            steps.addView(Ui.label(this, getString(R.string.phone_heading), 34, Ui.TEXT, Typeface.BOLD));
+            steps.addView(step(getString(R.string.phone_step1)));
+            steps.addView(step(getString(R.string.phone_step2)));
+            steps.addView(step(getString(R.string.phone_step3)));
+            steps.addView(step(getString(R.string.phone_step4)));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
             lp.topMargin = 24;
             steps.addView(Ui.label(this, url, 22, Ui.TEXT_DIM, Typeface.NORMAL), lp);
             // Android 17 silently blocks home-network pages for browsers until this is allowed.
             LinearLayout.LayoutParams hl = new LinearLayout.LayoutParams(-2, -2);
             hl.topMargin = 12;
-            steps.addView(Ui.label(this, "Ochilmasa: telefon Sozlamalari → Ilovalar → Chrome → Ruxsatlar →"
-                    + " Yaqin-atrofdagi qurilmalar → Ruxsat berish", 20, Ui.TEXT_DIM, Typeface.NORMAL), hl);
+            steps.addView(Ui.label(this, getString(R.string.phone_blocked_hint), 20, Ui.TEXT_DIM, Typeface.NORMAL), hl);
         }
         body.addView(steps, new LinearLayout.LayoutParams(0, -2, 1f));
         root.addView(body, Ui.weighted(22));
 
-        root.addView(Ui.footer(this, "BACK", "orqaga"), new LinearLayout.LayoutParams(-1, 52));
+        root.addView(Ui.footer(this, "BACK", getString(R.string.common_back)), new LinearLayout.LayoutParams(-1, 52));
         setContentView(root);
     }
 

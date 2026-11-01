@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- System screens: Wi-Fi, About, Boost, developer tools, build properties. Russian. -->
+<resources>
+    <!-- Wi-Fi -->
+    <string name="wifi_on">Wi-Fi включён</string>
+    <string name="wifi_off">Wi-Fi выключен</string>
+    <string name="wifi_ok_to_turn_off">OK — выключить</string>
+    <string name="wifi_ok_to_turn_on">OK — включить</string>
+    <string name="wifi_state_off">Выключен</string>
+    <string name="wifi_disabled">Wi-Fi выключен</string>
+    <string name="wifi_turn_on_hint">Включите Wi-Fi, чтобы был интернет</string>
+    <string name="wifi_connected">Подключено</string>
+    <string name="wifi_not_connected">Не подключено</string>
+    <string name="wifi_signal">Сигнал: %1$s</string>
+    <string name="wifi_signal_excellent">отличный</string>
+    <string name="wifi_signal_good">хороший</string>
+    <string name="wifi_signal_fair">средний</string>
+    <string name="wifi_signal_weak">слабый</string>
+    <string name="wifi_choose_network">Выберите сеть</string>
+    <string name="wifi_choose_hint">Выберите сеть в списке справа и нажмите OK</string>
+    <string name="wifi_list_off">Wi-Fi выключен — включите кнопкой слева</string>
+    <string name="wifi_searching">Ищем сети…</string>
+    <string name="wifi_net_secured">С паролем</string>
+    <string name="wifi_net_open">Открытая</string>
+    <string name="wifi_already_connected">%1$s — уже подключено</string>
+    <string name="wifi_unsupported">Этот тип сети не поддерживается</string>
+    <string name="wifi_password">Пароль</string>
+    <string name="wifi_password_keep_saved">Оставьте пустым, чтобы взять сохранённый пароль</string>
+    <string name="wifi_password_too_short">Пароль должен быть не короче 8 символов</string>
+    <string name="wifi_connect">Подключить</string>
+    <string name="wifi_cancel">Отмена</string>
+    <string name="wifi_save_failed">%1$s: не удалось сохранить. Попробуйте: Настройки → О телевизоре → Заводское меню настроек</string>
+    <string name="wifi_connecting">%1$s — подключение…</string>
+
+    <!-- About this TV -->
+    <string name="about_title">О телевизоре</string>
+    <string name="about_device">Устройство</string>
+    <string name="about_model">Модель</string>
+    <string name="about_firmware">Прошивка</string>
+    <string name="about_updated">Дата обновления</string>
+    <string name="about_memory">Память</string>
+    <string name="about_ram">Оперативная память</string>
+    <string name="about_storage">Встроенная память</string>
+    <string name="about_free_of">%1$s свободно / %2$s</string>
+    <string name="about_network">Сеть</string>
+    <string name="about_ip">IP-адрес</string>
+    <string name="about_not_connected">не подключено</string>
+    <string name="about_more">Дополнительно</string>
+    <string name="about_dev_tools">Для разработчиков</string>
+    <string name="about_dev_tools_hint">Для специалистов</string>
+    <string name="about_factory_menu">Заводское меню настроек</string>
+    <string name="about_advanced">Расширенные</string>
+    <string name="about_settings">Настройки</string>
+
+    <!-- Boost -->
+    <string name="boost_title">Ускорение</string>
+    <string name="boost_memory_hint">Если телевизор тормозит, нажмите эту кнопку</string>
+    <string name="boost_free_memory">Освободить память</string>
+    <string name="boost_internet_hint">Если YouTube зависает, проверьте интернет</string>
+    <string name="boost_speed_test">Проверить скорость интернета</string>
+    <string name="boost_mb_free">%1$d MB свободно</string>
+    <string name="boost_cleaning">Очищаем…</string>
+    <string name="boost_freed">+%1$d MB  →  %2$d MB свободно</string>
+    <string name="boost_measuring">Измеряем…</string>
+    <string name="boost_speed_result">%1$.1f Мбит/с  —  %2$s</string>
+    <string name="boost_speed_hd">Хватит для YouTube HD</string>
+    <string name="boost_speed_normal">Хватит для обычного качества</string>
+    <string name="boost_speed_slow">Медленно</string>
+    <string name="boost_no_internet">Нет интернета</string>
+
+    <!-- Developer tools -->
+    <string name="dev_title">Для разработчиков</string>
+    <string name="dev_software">Программы</string>
+    <string name="dev_firmware">Прошивка</string>
+    <string name="dev_build_date">Дата сборки</string>
+    <string name="dev_security_patch">Патч безопасности</string>
+    <string name="dev_kernel">Ядро</string>
+    <string name="dev_hardware">Оборудование</string>
+    <string name="dev_board">Плата</string>
+    <string name="dev_chip">Чип</string>
+    <string name="dev_cpu_value">Ядер: %1$d  ·  %2$s</string>
+    <string name="dev_ram">ОЗУ</string>
+    <string name="dev_storage">Память</string>
+    <string name="dev_free_of">свободно %1$s из %2$s</string>
+    <string name="dev_screen">Экран</string>
+    <string name="dev_resolution">Разрешение</string>
+    <string name="dev_density">Плотность</string>
+    <string name="dev_network">Сеть</string>
+    <string name="dev_status">Состояние</string>
+    <string name="dev_not_connected">Не подключено</string>
+    <string name="dev_interface">Интерфейс</string>
+    <string name="dev_ip">IP-адрес</string>
+    <string name="dev_gateway">Шлюз</string>
+    <string name="dev_mac">MAC-адрес</string>
+    <string name="dev_debugging">Отладка</string>
+    <string name="dev_adb">Отладка по USB / сети</string>
+    <string name="dev_tools">Инструменты</string>
+    <string name="dev_build_props">Свойства сборки</string>
+    <string name="dev_adb_off_title">Выключить отладку?</string>
+    <string name="dev_adb_off_message">Удалённое обслуживание по сети не будет работать, пока отладку снова не включат здесь.</string>
+    <string name="dev_turn_off">Выключить</string>
+    <string name="dev_cancel">Отмена</string>
+    <string name="dev_no_permission">Нет прав менять эту настройку</string>
+
+    <!-- Build properties -->
+    <string name="props_title">Свойства сборки</string>
+    <string name="props_not_readable">Не удалось прочитать</string>
+</resources>

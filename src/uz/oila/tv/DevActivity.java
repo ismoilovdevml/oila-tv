@@ -25,8 +25,9 @@ import java.net.NetworkInterface;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 
-/** Developer tools in English: what the vendor debug panel shows, minus the risky tools. */
+/** Developer tools: what the vendor debug panel shows, minus the risky tools. */
 public final class DevActivity extends Activity {
     private ListRow adb;
 
@@ -34,50 +35,55 @@ public final class DevActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.SLIDERS, 0xFF8F98AB, 0xFF596174, "Developer tools"),
+        root.addView(Ui.header(this, Glyphs.SLIDERS, 0xFF8F98AB, 0xFF596174, getString(R.string.dev_title)),
                 new LinearLayout.LayoutParams(-1, 72));
         LinearLayout col = ListRow.column(this, root);
 
-        ListRow.section(col, "Software");
+        ListRow.section(col, getString(R.string.dev_software));
         ListRow first = ListRow.add(col, new ListRow(this, "Android", Build.VERSION.RELEASE + "  (API " + Build.VERSION.SDK_INT + ")"));
-        ListRow.add(col, new ListRow(this, "Firmware", prop("ro.product.version", "?") + "  ·  " + Build.TYPE));
-        ListRow.add(col, new ListRow(this, "Build date", new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(Build.TIME))));
-        ListRow.add(col, new ListRow(this, "Security patch", Build.VERSION.SECURITY_PATCH));
-        ListRow.add(col, new ListRow(this, "Kernel", System.getProperty("os.version", "?")));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_firmware), prop("ro.product.version", "?") + "  ·  " + Build.TYPE));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_build_date), new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(Build.TIME))));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_security_patch), Build.VERSION.SECURITY_PATCH));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_kernel), System.getProperty("os.version", "?")));
 
-        ListRow.section(col, "Hardware");
-        ListRow.add(col, new ListRow(this, "Board", prop("ktc.board.model", Build.BOARD)));
-        ListRow.add(col, new ListRow(this, "Chip", prop("ro.board.platform", Build.HARDWARE).toUpperCase()));
-        ListRow.add(col, new ListRow(this, "CPU", Runtime.getRuntime().availableProcessors() + " cores  ·  " + Build.SUPPORTED_ABIS[0]));
+        ListRow.section(col, getString(R.string.dev_hardware));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_board), prop("ktc.board.model", Build.BOARD)));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_chip),
+                prop("ro.board.platform", Build.HARDWARE).toUpperCase(Locale.ROOT)));
+        ListRow.add(col, new ListRow(this, "CPU", getString(R.string.dev_cpu_value,
+                Runtime.getRuntime().availableProcessors(), Build.SUPPORTED_ABIS[0])));
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
         ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryInfo(mi);
-        ListRow.add(col, new ListRow(this, "RAM", mb(mi.availMem) + " free of " + mb(mi.totalMem)));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_ram),
+                getString(R.string.dev_free_of, mb(mi.availMem), mb(mi.totalMem))));
         StatFs fs = new StatFs(Environment.getDataDirectory().getPath());
-        ListRow.add(col, new ListRow(this, "Storage", mb(fs.getAvailableBytes()) + " free of " + mb(fs.getTotalBytes())));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_storage),
+                getString(R.string.dev_free_of, mb(fs.getAvailableBytes()), mb(fs.getTotalBytes()))));
 
-        ListRow.section(col, "Screen");
+        ListRow.section(col, getString(R.string.dev_screen));
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getRealMetrics(dm);
-        ListRow.add(col, new ListRow(this, "Resolution", dm.widthPixels + " × " + dm.heightPixels));
-        ListRow.add(col, new ListRow(this, "Density", dm.densityDpi + " dpi"));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_resolution), dm.widthPixels + " × " + dm.heightPixels));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_density), dm.densityDpi + " dpi"));
 
-        ListRow.section(col, "Network");
+        ListRow.section(col, getString(R.string.dev_network));
         network(col);
 
-        ListRow.section(col, "Debugging");
-        adb = ListRow.add(col, new ListRow(this, "USB / network debugging", null).onClick(new View.OnClickListener() {
+        ListRow.section(col, getString(R.string.dev_debugging));
+        adb = ListRow.add(col, new ListRow(this, getString(R.string.dev_adb), null).onClick(new View.OnClickListener() {
             @Override public void onClick(View v) { toggleAdb(); }
         }));
         refreshAdb();
 
-        ListRow.section(col, "Tools");
-        ListRow props = ListRow.add(col, new ListRow(this, "Build properties", "build.prop"));
+        ListRow.section(col, getString(R.string.dev_tools));
+        ListRow props = ListRow.add(col, new ListRow(this, getString(R.string.dev_build_props), "build.prop"));
         props.chevron = true;
         props.onClick(new View.OnClickListener() {
             @Override public void onClick(View v) { startActivity(new Intent(DevActivity.this, PropsActivity.class)); }
         });
 
-        root.addView(Ui.footer(this, "▲ ▼", "scroll", "OK", "select", "BACK", "back"),
+        root.addView(Ui.footer(this, "▲ ▼", getString(R.string.common_scroll), "OK",
+                getString(R.string.common_select), "BACK", getString(R.string.common_back)),
                 new LinearLayout.LayoutParams(-1, 52));
         setContentView(root);
         first.requestFocus();
@@ -88,23 +94,23 @@ public final class DevActivity extends Activity {
         Network n = cm == null ? null : cm.getActiveNetwork();
         LinkProperties lp = n == null ? null : cm.getLinkProperties(n);
         if (lp == null) {
-            ListRow.add(col, new ListRow(this, "Status", "Not connected"));
+            ListRow.add(col, new ListRow(this, getString(R.string.dev_status), getString(R.string.dev_not_connected)));
             return;
         }
-        ListRow.add(col, new ListRow(this, "Interface", lp.getInterfaceName()));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_interface), lp.getInterfaceName()));
         for (LinkAddress a : lp.getLinkAddresses()) {
-            if (a.getAddress().getAddress().length == 4) ListRow.add(col, new ListRow(this, "IP address", a.toString()));
+            if (a.getAddress().getAddress().length == 4) ListRow.add(col, new ListRow(this, getString(R.string.dev_ip), a.toString()));
         }
         for (RouteInfo r : lp.getRoutes()) {
             if (r.isDefaultRoute() && r.getGateway() != null) {
-                ListRow.add(col, new ListRow(this, "Gateway", r.getGateway().getHostAddress()));
+                ListRow.add(col, new ListRow(this, getString(R.string.dev_gateway), r.getGateway().getHostAddress()));
                 break;
             }
         }
         StringBuilder dns = new StringBuilder();
         for (InetAddress d : lp.getDnsServers()) dns.append(dns.length() == 0 ? "" : ", ").append(d.getHostAddress());
         ListRow.add(col, new ListRow(this, "DNS", dns.toString()));
-        ListRow.add(col, new ListRow(this, "MAC address", mac(lp.getInterfaceName())));
+        ListRow.add(col, new ListRow(this, getString(R.string.dev_mac), mac(lp.getInterfaceName())));
     }
 
     private void refreshAdb() {
@@ -119,12 +125,12 @@ public final class DevActivity extends Activity {
             return;
         }
         new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
-                .setTitle("Turn debugging off?")
-                .setMessage("Remote maintenance over the network will stop working until it is turned back on here.")
-                .setPositiveButton("Turn off", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.dev_adb_off_title)
+                .setMessage(R.string.dev_adb_off_message)
+                .setPositiveButton(R.string.dev_turn_off, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int w) { setAdb(0); }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.dev_cancel, null)
                 .show();
     }
 
@@ -132,7 +138,7 @@ public final class DevActivity extends Activity {
         try {
             Settings.Global.putInt(getContentResolver(), Settings.Global.ADB_ENABLED, on);
         } catch (SecurityException e) {
-            Toast.makeText(this, "No permission to change this setting", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.dev_no_permission, Toast.LENGTH_LONG).show();
         }
         refreshAdb();
     }

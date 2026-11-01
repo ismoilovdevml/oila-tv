@@ -19,6 +19,8 @@ public final class MediaActivity extends Activity {
     static final int PHOTOS = 0, VIDEOS = 1, MUSIC = 2;
     static final Uri[] STORES = { MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI };
+    /** Name of each kind, indexed like STORES. */
+    static final int[] TITLES = { R.string.media_photos, R.string.media_videos, R.string.media_music };
 
     private Tile[] tiles;
     private ListRow storage;
@@ -27,13 +29,13 @@ public final class MediaActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.GALLERY, 0xFFBD7CEA, 0xFF8538D2, "Galereya"),
+        root.addView(Ui.header(this, Glyphs.GALLERY, 0xFFBD7CEA, 0xFF8538D2, getString(R.string.home_gallery)),
                 new LinearLayout.LayoutParams(-1, 72));
 
         tiles = new Tile[] {
-                new Tile(this, "Rasmlar", "", Glyphs.GALLERY, 0xFFEE8A6B, 0xFFD5523A, 36f).centered(),
-                new Tile(this, "Videolar", "", Glyphs.YOUTUBE, 0xFFF4B068, 0xFFE57C33, 36f).centered(),
-                new Tile(this, "Musiqa", "", Glyphs.MUSIC, 0xFF5CB8E8, 0xFF2D7FC0, 36f).centered() };
+                new Tile(this, getString(TITLES[PHOTOS]), "", Glyphs.GALLERY, 0xFFEE8A6B, 0xFFD5523A, 36f).centered(),
+                new Tile(this, getString(TITLES[VIDEOS]), "", Glyphs.YOUTUBE, 0xFFF4B068, 0xFFE57C33, 36f).centered(),
+                new Tile(this, getString(TITLES[MUSIC]), "", Glyphs.MUSIC, 0xFF5CB8E8, 0xFF2D7FC0, 36f).centered() };
         for (int i = 0; i < tiles.length; i++) {
             final int kind = i;
             tiles[i].setOnClickListener(new View.OnClickListener() {
@@ -52,7 +54,8 @@ public final class MediaActivity extends Activity {
         root.addView(storage, sl);
         root.addView(new View(this), Ui.weighted(0));
 
-        root.addView(Ui.footer(this, "◀ ▶", "tanlash", "OK", "ochish", "BACK", "orqaga"),
+        root.addView(Ui.footer(this, "◀ ▶", getString(R.string.common_select),
+                "OK", getString(R.string.common_open), "BACK", getString(R.string.common_back)),
                 new LinearLayout.LayoutParams(-1, 52));
         setContentView(root);
         tiles[0].requestFocus();
@@ -63,7 +66,9 @@ public final class MediaActivity extends Activity {
         super.onResume();
         for (int i = 0; i < tiles.length; i++) {
             int n = count(this, i);
-            tiles[i].subtitle = n < 0 ? "Ruxsat yo'q" : n == 0 ? "Hali yo'q" : n + " ta";
+            tiles[i].subtitle = n < 0 ? getString(R.string.media_no_permission)
+                    : n == 0 ? getString(R.string.media_none_yet)
+                    : getResources().getQuantityString(R.plurals.media_count, n, n);
             tiles[i].invalidate();
         }
         StatFs fs = new StatFs(Environment.getDataDirectory().getPath());
@@ -72,10 +77,9 @@ public final class MediaActivity extends Activity {
         for (StorageVolume v : sm.getStorageVolumes()) {
             if (v.isRemovable() && Environment.MEDIA_MOUNTED.equals(v.getState())) usb++;
         }
-        storage.title = usb > 0 ? "USB fleshka ulangan (" + usb + ")" : "USB fleshka ulanmagan";
-        storage.set("Ichki xotira: " + fs.getAvailableBytes() / 1048576 / 1024.0f + " GB bo'sh",
+        storage.title = usb > 0 ? getString(R.string.media_usb_connected, usb) : getString(R.string.media_usb_none);
+        storage.set(getString(R.string.media_internal_free, fs.getAvailableBytes() / 1073741824.0),
                 usb > 0 ? ListRow.GREEN : Ui.TEXT_DIM);
-        storage.value = String.format("Ichki xotira: %.1f GB bo'sh", fs.getAvailableBytes() / 1073741824.0);
     }
 
     static int count(Context c, int kind) {

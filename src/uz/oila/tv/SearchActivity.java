@@ -22,7 +22,7 @@ public final class SearchActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.YOUTUBE, 0xFFEE6B5F, 0xFFCF3429, "YouTube'da qidirish"),
+        root.addView(Ui.header(this, Glyphs.YOUTUBE, 0xFFEE6B5F, 0xFFCF3429, getString(R.string.search_title)),
                 new LinearLayout.LayoutParams(-1, 72));
 
         final EditText query = new EditText(this);
@@ -32,7 +32,7 @@ public final class SearchActivity extends Activity {
         query.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
         query.setTextColor(Ui.TEXT);
         query.setHintTextColor(Ui.TEXT_DIM);
-        query.setHint("Masalan: multfilm, yangiliklar, qo'shiqlar");
+        query.setHint(getString(R.string.search_field_hint));
         query.setPadding(28, 18, 28, 18);
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(0xFF171C2A);
@@ -53,7 +53,7 @@ public final class SearchActivity extends Activity {
 
         LinearLayout.LayoutParams hl = new LinearLayout.LayoutParams(-2, -2);
         hl.topMargin = 18;
-        root.addView(Ui.label(this, "Telefonda yozib \"TV'ga yuborish\"ni bosing. Pult bilan: OK, yozing, keyin o'ngdagi lupa tugmasi.",
+        root.addView(Ui.label(this, getString(R.string.search_help),
                 24, Ui.TEXT_SOFT, Typeface.NORMAL), hl);
 
         setContentView(root);

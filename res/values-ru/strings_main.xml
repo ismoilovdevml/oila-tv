@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home tiles -->
+    <string name="home_youtube_sub">Видео и мультики</string>
+    <string name="home_live_tv">Прямой эфир</string>
+    <string name="home_live_tv_sub">Каналы с антенны</string>
+    <string name="home_source">Устройства</string>
+    <string name="home_source_sub">HDMI / Приставка</string>
+    <string name="home_netflix_sub">Кино и сериалы</string>
+    <string name="home_wifi_sub">Подключение к сети</string>
+    <string name="home_gallery">Галерея</string>
+    <string name="home_gallery_sub">USB: видео, фото</string>
+    <string name="home_settings">Настройки</string>
+    <string name="home_settings_sub">Язык, время, экран</string>
+    <string name="home_apps">Приложения</string>
+    <string name="home_apps_sub">Все приложения</string>
+    <string name="home_youtube_search">поиск в YouTube</string>
+
+    <!-- Settings tiles -->
+    <string name="settings_language">Язык</string>
+    <string name="settings_datetime">Дата и время</string>
+    <string name="settings_datetime_sub">Часы, 24 часа</string>
+    <string name="settings_boost">Ускорение</string>
+    <string name="settings_boost_sub">Память, скорость интернета</string>
+    <string name="settings_about">О телевизоре</string>
+    <string name="settings_about_sub">Модель, память, IP</string>
+    <string name="settings_phone">Телефон</string>
+    <string name="settings_phone_sub">Ввод с телефона</string>
+
+    <!-- Input sources -->
+    <string name="source_antenna">Антенна</string>
+    <string name="source_av_sub">Жёлто-бело-красный кабель</string>
+    <string name="source_hdmi1_sub">Приставка, консоль</string>
+    <string name="source_hdmi2_sub">Ноутбук, плеер</string>
+
+    <!-- No channels stored -->
+    <string name="nochannels_title">Каналы не найдены</string>
+    <string name="nochannels_steps">"1.  Подключите антенный кабель к гнезду ANT на задней стороне телевизора\n2.  Нажмите «Поиск каналов», затем на пульте MENU → CH → Автонастройка"</string>
+    <string name="nochannels_scan">Поиск каналов</string>
+    <string name="nochannels_scan_sub">Когда антенна подключена</string>
+    <string name="nochannels_scan_hint">На пульте: MENU → CH → Автонастройка</string>
+
+    <!-- Language -->
+    <string name="language_choose">Выберите язык телевизора</string>
+    <string name="language_selected">Выбран</string>
+    <string name="language_no_permission">Нет разрешения менять язык</string>
+
+    <!-- Date and time -->
+    <string name="datetime_auto">Время из интернета</string>
+    <string name="datetime_24h">24-часовой формат</string>
+    <string name="datetime_zone">Часовой пояс</string>
+    <string name="datetime_uzbekistan">Узбекистан</string>
+    <string name="datetime_no_permission">Нет разрешения менять эту настройку</string>
+
+    <!-- Gallery -->
+    <string name="media_photos">Фото</string>
+    <string name="media_videos">Видео</string>
+    <string name="media_music">Музыка</string>
+    <string name="media_no_permission">Нет доступа</string>
+    <string name="media_none_yet">Пока пусто</string>
+    <plurals name="media_count">
+        <item quantity="one">%1$d файл</item>
+        <item quantity="few">%1$d файла</item>
+        <item quantity="many">%1$d файлов</item>
+        <item quantity="other">%1$d файла</item>
+    </plurals>
+    <string name="media_usb_connected">Флешка подключена (%1$d)</string>
+    <string name="media_usb_none">Флешка не подключена</string>
+    <string name="media_internal_free">Память ТВ: свободно %1$.1f ГБ</string>
+    <string name="media_list_empty">Здесь пока ничего нет.\nПодключите флешку к телевизору.</string>
+
+    <!-- Player -->
+    <string name="player_cannot_open">Не удалось открыть файл</string>
+    <string name="player_paused">Пауза</string>
+</resources>

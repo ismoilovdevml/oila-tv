@@ -175,11 +175,11 @@ final class PhoneLink implements Runnable {
         String key = q < 0 ? "" : param(target.substring(q + 1), "k");
         Log.i(TAG, from + " " + request[0] + " " + path);
         if (!MessageDigest.isEqual(key.getBytes(StandardCharsets.UTF_8), token)) {
-            reply(out, "403 Forbidden", "text/html", PAGE_DENIED);
+            reply(out, "403 Forbidden", "text/html", denied());
             return;
         }
         if (request[0].equals("GET") && path.equals("/")) {
-            reply(out, "200 OK", "text/html", PAGE);
+            reply(out, "200 OK", "text/html", page());
         } else if (request[0].equals("POST") && path.equals("/yt")) {
             reply(out, "200 OK", "text/plain", youtube(app, text.trim()) ? "ok" : "noapp");
         } else if (request[0].equals("POST") && (path.equals("/type") || path.equals("/enter"))) {
@@ -250,30 +250,48 @@ final class PhoneLink implements Runnable {
             + ".yt{background:#e53935}.tv{background:#2f63dd}.gh{background:#2a3142}"
             + "#s{margin-top:14px;min-height:1.4em;color:#9aa3b2}</style>";
 
-    private static final String PAGE = "<!doctype html><html lang=uz><head>" + STYLE + "</head><body>"
-            + "<h1>Oila TV &mdash; telefondan yozish</h1>"
-            + "<textarea id=t placeholder='Shu yerga yozing...' autofocus></textarea>"
-            + "<button class=yt id=yt>YouTube'da izlash</button>"
-            + "<button class=tv id=en>TV'ga yuborish (Enter)</button>"
-            + "<button class=gh id=cl>Tozalash</button><div id=s></div><script>"
-            + "var k=new URLSearchParams(location.search).get('k'),t=document.getElementById('t'),"
-            + "s=document.getElementById('s'),w;"
-            + "function post(p,b){return fetch(p+'?k='+encodeURIComponent(k),{method:'POST',body:b||''})"
-            + ".then(function(r){return r.text()}).catch(function(){return 'off'})}"
-            + "function say(r,ok){s.textContent=r=='ok'?ok:r=='nofield'?"
-            + "\"TV'da yozish maydoni yo'q — YouTube'da izlash tugmasini bosing\":r=='off'?"
-            + "\"Televizor bilan aloqa yo'q. Telefon va TV bitta Wi-Fi'dami?\":r=='noapp'?"
-            + "\"YouTube ochilmadi\":r}"
-            + "t.oninput=function(){clearTimeout(w);w=setTimeout(function(){post('/type',t.value)"
-            + ".then(function(r){say(r,\"TV'da yozilmoqda\")})},250)};"
-            + "document.getElementById('yt').onclick=function(){if(t.value.trim())post('/yt',t.value)"
-            + ".then(function(r){say(r,\"YouTube'da qidirilmoqda\")})};"
-            + "document.getElementById('en').onclick=function(){post('/type',t.value).then(function(){"
-            + "return post('/enter')}).then(function(r){say(r,'Yuborildi')})};"
-            + "document.getElementById('cl').onclick=function(){t.value='';post('/type','');t.focus()};"
-            + "</script></body></html>";
+    /** The phone page in the TV's current language; JS strings are passed through {@link #js}. */
+    private String page() {
+        return "<!doctype html><html lang=" + lang() + "><head>" + STYLE + "</head><body>"
+                + "<h1>" + html(app.getString(R.string.page_title)) + "</h1>"
+                + "<textarea id=t placeholder='" + html(app.getString(R.string.page_placeholder)) + "' autofocus></textarea>"
+                + "<button class=yt id=yt>" + html(app.getString(R.string.page_youtube)) + "</button>"
+                + "<button class=tv id=en>" + html(app.getString(R.string.page_send)) + "</button>"
+                + "<button class=gh id=cl>" + html(app.getString(R.string.page_clear)) + "</button><div id=s></div><script>"
+                + "var k=new URLSearchParams(location.search).get('k'),t=document.getElementById('t'),"
+                + "s=document.getElementById('s'),w;"
+                + "function post(p,b){return fetch(p+'?k='+encodeURIComponent(k),{method:'POST',body:b||''})"
+                + ".then(function(r){return r.text()}).catch(function(){return 'off'})}"
+                + "function say(r,ok){s.textContent=r=='ok'?ok:r=='nofield'?" + js(R.string.page_nofield)
+                + ":r=='off'?" + js(R.string.page_offline) + ":r=='noapp'?" + js(R.string.page_noapp) + ":r}"
+                + "t.oninput=function(){clearTimeout(w);w=setTimeout(function(){post('/type',t.value)"
+                + ".then(function(r){say(r," + js(R.string.page_typing) + ")})},250)};"
+                + "document.getElementById('yt').onclick=function(){if(t.value.trim())post('/yt',t.value)"
+                + ".then(function(r){say(r," + js(R.string.page_searching) + ")})};"
+                + "document.getElementById('en').onclick=function(){post('/type',t.value).then(function(){"
+                + "return post('/enter')}).then(function(r){say(r," + js(R.string.page_sent) + ")})};"
+                + "document.getElementById('cl').onclick=function(){t.value='';post('/type','');t.focus()};"
+                + "</script></body></html>";
+    }
 
-    private static final String PAGE_DENIED = "<!doctype html><html lang=uz><head>" + STYLE + "</head><body>"
-            + "<h1>Kirish kodi noto'g'ri</h1><p>Televizordagi QR kodni qaytadan skanerlang:"
-            + " Sozlamalar &rarr; Telefon.</p></body></html>";
+    private String denied() {
+        return "<!doctype html><html lang=" + lang() + "><head>" + STYLE + "</head><body>"
+                + "<h1>" + html(app.getString(R.string.page_denied_title)) + "</h1><p>"
+                + html(app.getString(R.string.page_denied_body)) + "</p></body></html>";
+    }
+
+    private String lang() {
+        return app.getResources().getConfiguration().getLocales().get(0).getLanguage();
+    }
+
+    private static String html(String s) {
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                .replace("\"", "&quot;").replace("'", "&#39;");
+    }
+
+    /** A resource string as a double-quoted JS literal, safe inside a script element. */
+    private String js(int id) {
+        String s = app.getString(id).replace("\\", "\\\\").replace("\"", "\\\"").replace("<", "\\u003c");
+        return "\"" + s + "\"";
+    }
 }

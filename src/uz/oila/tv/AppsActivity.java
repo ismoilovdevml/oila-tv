@@ -40,7 +40,7 @@ public final class AppsActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.APPS, 0xFF5CB8E8, 0xFF2D7FC0, "Ilovalar"),
+        root.addView(Ui.header(this, Glyphs.APPS, 0xFF5CB8E8, 0xFF2D7FC0, getString(R.string.home_apps)),
                 new LinearLayout.LayoutParams(-1, 72));
 
         ScrollView scroll = new ScrollView(this);
@@ -73,7 +73,8 @@ public final class AppsActivity extends Activity {
 
         LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(-1, 52);
         footLp.topMargin = 10;
-        root.addView(Ui.footer(this, "◀ ▲ ▼ ▶", "yurish", "OK", "ochish", "BACK", "orqaga"), footLp);
+        root.addView(Ui.footer(this, "◀ ▲ ▼ ▶", getString(R.string.common_move),
+                "OK", getString(R.string.common_open), "BACK", getString(R.string.common_back)), footLp);
         setContentView(root);
         if (firstTile != null) firstTile.requestFocus();
     }

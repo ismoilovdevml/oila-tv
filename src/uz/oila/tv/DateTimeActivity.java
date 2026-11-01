@@ -5,12 +5,14 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextClock;
 import android.widget.Toast;
 
+import java.util.Locale;
 import java.util.TimeZone;
 
 /** Big clock and date, plus the only two time options a family needs. */
@@ -21,7 +23,7 @@ public final class DateTimeActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.CLOCK, 0xFFF4B068, 0xFFE57C33, "Sana va vaqt"),
+        root.addView(Ui.header(this, Glyphs.CLOCK, 0xFFF4B068, 0xFFE57C33, getString(R.string.settings_datetime)),
                 new LinearLayout.LayoutParams(-1, 72));
 
         LinearLayout card = new LinearLayout(this);
@@ -32,7 +34,9 @@ public final class DateTimeActivity extends Activity {
         bg.setCornerRadius(22);
         card.setBackground(bg);
         card.addView(clock("HH:mm", 96, Typeface.BOLD));
-        card.addView(clock("EEEE, d MMMM yyyy", 28, Typeface.NORMAL));
+        // Weekday, day, month and year in the order and words of the current language.
+        Locale locale = getResources().getConfiguration().getLocales().get(0);
+        card.addView(clock(DateFormat.getBestDateTimePattern(locale, "EEEEdMMMMyyyy"), 28, Typeface.NORMAL));
         LinearLayout.LayoutParams cl = new LinearLayout.LayoutParams(-1, 200);
         cl.topMargin = 22;
         cl.leftMargin = 160;
@@ -40,20 +44,22 @@ public final class DateTimeActivity extends Activity {
         root.addView(card, cl);
 
         LinearLayout col = ListRow.column(this, root);
-        auto = ListRow.add(col, new ListRow(this, "Vaqtni internetdan olish", null).onClick(new View.OnClickListener() {
+        auto = ListRow.add(col, new ListRow(this, getString(R.string.datetime_auto), null).onClick(new View.OnClickListener() {
             @Override public void onClick(View v) { flip(true); }
         }));
-        h24 = ListRow.add(col, new ListRow(this, "24 soatlik format", null).onClick(new View.OnClickListener() {
+        h24 = ListRow.add(col, new ListRow(this, getString(R.string.datetime_24h), null).onClick(new View.OnClickListener() {
             @Override public void onClick(View v) { flip(false); }
         }));
         TimeZone tz = TimeZone.getDefault();
         int off = tz.getRawOffset() / 60000;
         // Asia/Samarkand and Asia/Tashkent are the same clock; families know it as Uzbekistan time.
-        String zone = tz.getID().matches("Asia/(Samarkand|Tashkent)") ? "O'zbekiston" : tz.getID().replace("Asia/", "");
-        ListRow.add(col, new ListRow(this, "Vaqt mintaqasi",
+        String zone = tz.getID().matches("Asia/(Samarkand|Tashkent)")
+                ? getString(R.string.datetime_uzbekistan) : tz.getID().replace("Asia/", "");
+        ListRow.add(col, new ListRow(this, getString(R.string.datetime_zone),
                 String.format("%s  GMT%+03d:%02d", zone, off / 60, Math.abs(off % 60))));
 
-        root.addView(Ui.footer(this, "▲ ▼", "tanlash", "OK", "yoqish / o'chirish", "BACK", "orqaga"),
+        root.addView(Ui.footer(this, "▲ ▼", getString(R.string.common_select),
+                "OK", getString(R.string.common_toggle), "BACK", getString(R.string.common_back)),
                 new LinearLayout.LayoutParams(-1, 52));
         setContentView(root);
         refresh();
@@ -88,7 +94,7 @@ public final class DateTimeActivity extends Activity {
                 Settings.System.putString(getContentResolver(), Settings.System.TIME_12_24, h24.toggle ? "12" : "24");
             }
         } catch (SecurityException e) {
-            Toast.makeText(this, "Bu sozlamani o'zgartirishga ruxsat yo'q", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.datetime_no_permission, Toast.LENGTH_LONG).show();
         }
         refresh();
     }

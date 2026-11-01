@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- System screens: Wi-Fi, About, Boost, developer tools, build properties. Default = Uzbek (Latin). -->
+<resources>
+    <!-- Wi-Fi -->
+    <string name="wifi_on">Wi-Fi yoniq</string>
+    <string name="wifi_off">Wi-Fi o\'chiq</string>
+    <string name="wifi_ok_to_turn_off">O\'chirish uchun OK</string>
+    <string name="wifi_ok_to_turn_on">Yoqish uchun OK</string>
+    <string name="wifi_state_off">O\'chiq</string>
+    <string name="wifi_disabled">Wi-Fi o\'chirilgan</string>
+    <string name="wifi_turn_on_hint">Internet uchun Wi-Fi\'ni yoqing</string>
+    <string name="wifi_connected">Ulangan</string>
+    <string name="wifi_not_connected">Ulanmagan</string>
+    <string name="wifi_signal">Signal: %1$s</string>
+    <string name="wifi_signal_excellent">a\'lo</string>
+    <string name="wifi_signal_good">yaxshi</string>
+    <string name="wifi_signal_fair">o\'rtacha</string>
+    <string name="wifi_signal_weak">zaif</string>
+    <string name="wifi_choose_network">Tarmoqni tanlang</string>
+    <string name="wifi_choose_hint">O\'ngdagi ro\'yxatdan tarmoqni tanlab, OK bosing</string>
+    <string name="wifi_list_off">Wi-Fi o\'chiq — chapdagi tugma bilan yoqing</string>
+    <string name="wifi_searching">Tarmoqlar qidirilmoqda…</string>
+    <string name="wifi_net_secured">Parol bilan</string>
+    <string name="wifi_net_open">Ochiq</string>
+    <string name="wifi_already_connected">%1$s — allaqachon ulangan</string>
+    <string name="wifi_unsupported">Bu tarmoq turi qo\'llab-quvvatlanmaydi</string>
+    <string name="wifi_password">Parol</string>
+    <string name="wifi_password_keep_saved">Saqlangan parol uchun bo\'sh qoldiring</string>
+    <string name="wifi_password_too_short">Parol kamida 8 belgi bo\'lishi kerak</string>
+    <string name="wifi_connect">Ulanish</string>
+    <string name="wifi_cancel">Bekor qilish</string>
+    <string name="wifi_save_failed">%1$s: saqlab bo\'lmadi. Sozlamalar → Televizor haqida → Zavod sozlamalari menyusi orqali urinib ko\'ring</string>
+    <string name="wifi_connecting">%1$s — ulanmoqda…</string>
+
+    <!-- About this TV -->
+    <string name="about_title">Televizor haqida</string>
+    <string name="about_device">Qurilma</string>
+    <string name="about_model">Model</string>
+    <string name="about_firmware">Proshivka</string>
+    <string name="about_updated">Yangilangan sana</string>
+    <string name="about_memory">Xotira</string>
+    <string name="about_ram">Operativ xotira</string>
+    <string name="about_storage">Ichki xotira</string>
+    <string name="about_free_of">%1$s bo\'sh / %2$s</string>
+    <string name="about_network">Tarmoq</string>
+    <string name="about_ip">IP manzil</string>
+    <string name="about_not_connected">ulanmagan</string>
+    <string name="about_more">Qo\'shimcha</string>
+    <string name="about_dev_tools">Dasturchi vositalari</string>
+    <string name="about_dev_tools_hint">Mutaxassislar uchun</string>
+    <string name="about_factory_menu">Zavod sozlamalari menyusi</string>
+    <string name="about_advanced">Kengaytirilgan</string>
+    <string name="about_settings">Sozlamalar</string>
+
+    <!-- Boost -->
+    <string name="boost_title">Tezlashtirish</string>
+    <string name="boost_memory_hint">Televizor sekinlashsa, shu tugmani bosing</string>
+    <string name="boost_free_memory">Xotirani bo\'shatish</string>
+    <string name="boost_internet_hint">YouTube qotib qolsa, internetni tekshiring</string>
+    <string name="boost_speed_test">Internet tezligini o\'lchash</string>
+    <string name="boost_mb_free">%1$d MB bo\'sh</string>
+    <string name="boost_cleaning">Tozalanmoqda…</string>
+    <string name="boost_freed">+%1$d MB  →  %2$d MB bo\'sh</string>
+    <string name="boost_measuring">O\'lchanmoqda…</string>
+    <string name="boost_speed_result">%1$.1f Mbit/s  —  %2$s</string>
+    <string name="boost_speed_hd">YouTube HD uchun yetarli</string>
+    <string name="boost_speed_normal">Oddiy sifat uchun yetarli</string>
+    <string name="boost_speed_slow">Sekin</string>
+    <string name="boost_no_internet">Internet yo\'q</string>
+
+    <!-- Developer tools -->
+    <string name="dev_title">Dasturchi vositalari</string>
+    <string name="dev_software">Dasturiy ta\'minot</string>
+    <string name="dev_firmware">Proshivka</string>
+    <string name="dev_build_date">Yig\'ilgan sana</string>
+    <string name="dev_security_patch">Xavfsizlik yangilanishi</string>
+    <string name="dev_kernel">Yadro</string>
+    <string name="dev_hardware">Apparat qismi</string>
+    <string name="dev_board">Plata</string>
+    <string name="dev_chip">Chip</string>
+    <string name="dev_cpu_value">%1$d yadro  ·  %2$s</string>
+    <string name="dev_ram">Operativ xotira</string>
+    <string name="dev_storage">Ichki xotira</string>
+    <string name="dev_free_of">%1$s bo\'sh, jami %2$s</string>
+    <string name="dev_screen">Ekran</string>
+    <string name="dev_resolution">Aniqlik</string>
+    <string name="dev_density">Zichlik</string>
+    <string name="dev_network">Tarmoq</string>
+    <string name="dev_status">Holat</string>
+    <string name="dev_not_connected">Ulanmagan</string>
+    <string name="dev_interface">Interfeys</string>
+    <string name="dev_ip">IP manzil</string>
+    <string name="dev_gateway">Shlyuz</string>
+    <string name="dev_mac">MAC manzil</string>
+    <string name="dev_debugging">Nosozliklarni aniqlash</string>
+    <string name="dev_adb">USB / tarmoq orqali nosozliklarni aniqlash</string>
+    <string name="dev_tools">Vositalar</string>
+    <string name="dev_build_props">Tizim xususiyatlari</string>
+    <string name="dev_adb_off_title">Nosozliklarni aniqlash o\'chirilsinmi?</string>
+    <string name="dev_adb_off_message">Tarmoq orqali masofadan xizmat ko\'rsatish bu yerda qayta yoqilmaguncha ishlamaydi.</string>
+    <string name="dev_turn_off">O\'chirish</string>
+    <string name="dev_cancel">Bekor qilish</string>
+    <string name="dev_no_permission">Bu sozlamani o\'zgartirishga ruxsat yo\'q</string>
+
+    <!-- Build properties -->
+    <string name="props_title">Tizim xususiyatlari</string>
+    <string name="props_not_readable">O\'qib bo\'lmadi</string>
+</resources>

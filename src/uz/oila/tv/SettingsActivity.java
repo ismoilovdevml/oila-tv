@@ -14,16 +14,22 @@ public final class SettingsActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.SETTINGS, 0xFF8F98AB, 0xFF596174, "Sozlamalar"),
+        root.addView(Ui.header(this, Glyphs.SETTINGS, 0xFF8F98AB, 0xFF596174, getString(R.string.home_settings)),
                 new LinearLayout.LayoutParams(-1, 72));
 
         tiles = new Tile[] {
-                new Tile(this, "Wi-Fi", "Tarmoqqa ulanish", Glyphs.WIFI, 0xFF74D0BC, 0xFF41A08C),
-                new Tile(this, "Til", "O'zbekcha, Русский, English", Glyphs.LANGUAGE, 0xFF66A0F2, 0xFF2F63DD),
-                new Tile(this, "Sana va vaqt", "Soat, 24 soat", Glyphs.CLOCK, 0xFFF4B068, 0xFFE57C33),
-                new Tile(this, "Tezlashtirish", "Xotira, internet tezligi", Glyphs.BOOST, 0xFF6FE3A5, 0xFF2FA86B),
-                new Tile(this, "Televizor haqida", "Model, xotira, IP", Glyphs.INFO, 0xFFBD7CEA, 0xFF8538D2),
-                new Tile(this, "Telefon", "Telefondan yozish", Glyphs.PHONE, 0xFFF27B9B, 0xFFD23A68) };
+                new Tile(this, "Wi-Fi", getString(R.string.home_wifi_sub), Glyphs.WIFI, 0xFF74D0BC, 0xFF41A08C),
+                // Language names stay in their own script whatever the current language is.
+                new Tile(this, getString(R.string.settings_language), "O'zbekcha, Русский, English",
+                        Glyphs.LANGUAGE, 0xFF66A0F2, 0xFF2F63DD),
+                new Tile(this, getString(R.string.settings_datetime), getString(R.string.settings_datetime_sub),
+                        Glyphs.CLOCK, 0xFFF4B068, 0xFFE57C33),
+                new Tile(this, getString(R.string.settings_boost), getString(R.string.settings_boost_sub),
+                        Glyphs.BOOST, 0xFF6FE3A5, 0xFF2FA86B),
+                new Tile(this, getString(R.string.settings_about), getString(R.string.settings_about_sub),
+                        Glyphs.INFO, 0xFFBD7CEA, 0xFF8538D2),
+                new Tile(this, getString(R.string.settings_phone), getString(R.string.settings_phone_sub),
+                        Glyphs.PHONE, 0xFFF27B9B, 0xFFD23A68) };
         final Class<?>[] screens = { WifiActivity.class, LanguageActivity.class, DateTimeActivity.class,
                 BoostActivity.class, AboutActivity.class, PhoneActivity.class };
         for (int i = 0; i < tiles.length; i++) {
@@ -40,7 +46,8 @@ public final class SettingsActivity extends Activity {
 
         LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(-1, 52);
         footLp.topMargin = 14;
-        root.addView(Ui.footer(this, "◀ ▲ ▼ ▶", "yurish", "OK", "tanlash", "BACK", "orqaga"), footLp);
+        root.addView(Ui.footer(this, "◀ ▲ ▼ ▶", getString(R.string.common_move),
+                "OK", getString(R.string.common_select), "BACK", getString(R.string.common_back)), footLp);
         setContentView(root);
         tiles[0].requestFocus();
     }

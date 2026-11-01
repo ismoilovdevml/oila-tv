@@ -47,14 +47,14 @@ public final class PhoneKeyboard extends InputMethodService implements PhoneLink
         LinearLayout text = new LinearLayout(this);
         text.setOrientation(LinearLayout.VERTICAL);
         text.setPadding(36, 0, 0, 0);
-        text.addView(Ui.label(this, "Telefoningizda yozing", 34, Ui.TEXT, Typeface.BOLD));
+        text.addView(Ui.label(this, getString(R.string.keyboard_title), 34, Ui.TEXT, Typeface.BOLD));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
         lp.topMargin = 14;
-        text.addView(Ui.label(this, "Telefon kamerasini QR kodga qarating va ochilgan sahifada yozing.",
+        text.addView(Ui.label(this, getString(R.string.keyboard_body),
                 24, Ui.TEXT_SOFT, Typeface.NORMAL), lp);
         LinearLayout.LayoutParams fl = new LinearLayout.LayoutParams(-2, 52);
         fl.topMargin = 20;
-        text.addView(Ui.footer(this, "OK", "pult bilan yozish", "BACK", "yopish"), fl);
+        text.addView(Ui.footer(this, "OK", getString(R.string.keyboard_remote), "BACK", getString(R.string.common_close)), fl);
         panel.addView(text, new LinearLayout.LayoutParams(0, -2, 1f));
         return panel;
     }

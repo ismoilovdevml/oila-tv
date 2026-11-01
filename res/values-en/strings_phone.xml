@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keyboard_title">Type on your phone</string>
+    <string name="keyboard_body">Point your phone camera at the QR code and type on the page that opens.</string>
+    <string name="keyboard_remote">type with remote</string>
+
+    <string name="phone_title">Type from phone</string>
+    <string name="phone_offline_title">The TV is not connected to a network</string>
+    <string name="phone_offline_body">Connect first: Settings → Wi-Fi.</string>
+    <string name="phone_heading">Type and search from your phone</string>
+    <string name="phone_step1">1. Put the phone and the TV on the same Wi-Fi.</string>
+    <string name="phone_step2">2. Point the phone camera at the QR code.</string>
+    <string name="phone_step3">3. Type on the page that opens: search YouTube or fill a field on the TV.</string>
+    <string name="phone_step4">4. Bookmark the page — next time you won\'t need the QR code.</string>
+    <string name="phone_blocked_hint">If it won\'t open: phone Settings → Apps → Chrome → Permissions → Nearby devices → Allow</string>
+
+    <string name="search_title">Search YouTube</string>
+    <string name="search_field_hint">For example: cartoons, news, songs</string>
+    <string name="search_help">Type on the phone and press \"Send to TV\". With the remote: OK, type, then the magnifier key on the right.</string>
+
+    <string name="page_title">Oila TV — type from phone</string>
+    <string name="page_placeholder">Type here...</string>
+    <string name="page_youtube">Search YouTube</string>
+    <string name="page_send">Send to TV (Enter)</string>
+    <string name="page_clear">Clear</string>
+    <string name="page_typing">Typing on the TV</string>
+    <string name="page_nofield">No text field is open on the TV — use Search YouTube</string>
+    <string name="page_offline">Can\'t reach the TV. Are the phone and the TV on the same Wi-Fi?</string>
+    <string name="page_noapp">Couldn\'t open YouTube</string>
+    <string name="page_searching">Searching YouTube</string>
+    <string name="page_sent">Sent</string>
+    <string name="page_denied_title">Wrong access code</string>
+    <string name="page_denied_body">Scan the QR code on the TV again: Settings → Phone.</string>
+</resources>

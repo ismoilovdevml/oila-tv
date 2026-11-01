@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keyboard_title">Пишите с телефона</string>
+    <string name="keyboard_body">Наведите камеру телефона на QR-код и пишите на открывшейся странице.</string>
+    <string name="keyboard_remote">ввод пультом</string>
+
+    <string name="phone_title">Ввод с телефона</string>
+    <string name="phone_offline_title">Телевизор не подключён к сети</string>
+    <string name="phone_offline_body">Сначала подключитесь: Настройки → Wi-Fi.</string>
+    <string name="phone_heading">Пишите и ищите с телефона</string>
+    <string name="phone_step1">1. Телефон и телевизор должны быть в одной сети Wi-Fi.</string>
+    <string name="phone_step2">2. Наведите камеру телефона на QR-код.</string>
+    <string name="phone_step3">3. Пишите на открывшейся странице: поиск на YouTube или поле на ТВ.</string>
+    <string name="phone_step4">4. Сохраните страницу в закладках — в следующий раз QR-код не нужен.</string>
+    <string name="phone_blocked_hint">Если не открывается: Настройки телефона → Приложения → Chrome → Разрешения → Устройства поблизости → Разрешить</string>
+
+    <string name="search_title">Поиск на YouTube</string>
+    <string name="search_field_hint">Например: мультфильмы, новости, песни</string>
+    <string name="search_help">Напишите на телефоне и нажмите «Отправить на ТВ». Пультом: OK, введите текст, затем кнопка с лупой справа.</string>
+
+    <string name="page_title">Oila TV — ввод с телефона</string>
+    <string name="page_placeholder">Пишите здесь...</string>
+    <string name="page_youtube">Искать на YouTube</string>
+    <string name="page_send">Отправить на ТВ (Enter)</string>
+    <string name="page_clear">Очистить</string>
+    <string name="page_typing">Печатается на ТВ</string>
+    <string name="page_nofield">На ТВ нет поля ввода — нажмите «Искать на YouTube»</string>
+    <string name="page_offline">Нет связи с телевизором. Телефон и ТВ в одной сети Wi-Fi?</string>
+    <string name="page_noapp">Не удалось открыть YouTube</string>
+    <string name="page_searching">Ищем на YouTube</string>
+    <string name="page_sent">Отправлено</string>
+    <string name="page_denied_title">Неверный код доступа</string>
+    <string name="page_denied_body">Отсканируйте QR-код на телевизоре ещё раз: Настройки → Телефон.</string>
+</resources>

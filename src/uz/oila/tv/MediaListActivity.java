@@ -27,7 +27,6 @@ import java.util.concurrent.Executors;
 /** Grid of one media kind, newest first; thumbnails load off the UI thread. */
 public final class MediaListActivity extends Activity {
     private static final int COLUMNS = 4;
-    private static final String[] TITLES = { "Rasmlar", "Videolar", "Musiqa" };
     private static final int[][] COLORS = { { 0xFFEE8A6B, 0xFFD5523A }, { 0xFFF4B068, 0xFFE57C33 },
             { 0xFF5CB8E8, 0xFF2D7FC0 } };
 
@@ -41,7 +40,8 @@ public final class MediaListActivity extends Activity {
         kind = getIntent().getIntExtra("kind", MediaActivity.PHOTOS);
         int glyph = kind == MediaActivity.PHOTOS ? Glyphs.GALLERY : kind == MediaActivity.VIDEOS ? Glyphs.YOUTUBE : Glyphs.MUSIC;
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, glyph, COLORS[kind][0], COLORS[kind][1], TITLES[kind]),
+        root.addView(Ui.header(this, glyph, COLORS[kind][0], COLORS[kind][1],
+                getString(MediaActivity.TITLES[kind])),
                 new LinearLayout.LayoutParams(-1, 72));
 
         final ArrayList<Uri> uris = new ArrayList<>();
@@ -58,7 +58,7 @@ public final class MediaListActivity extends Activity {
         }
 
         if (uris.isEmpty()) {
-            TextView t = Ui.label(this, "Bu yerda hali hech narsa yo'q.\nUSB fleshkani televizorga ulang.",
+            TextView t = Ui.label(this, getString(R.string.media_list_empty),
                     28, Ui.TEXT_DIM, android.graphics.Typeface.BOLD);
             t.setGravity(Gravity.CENTER);
             t.setLineSpacing(12, 1);
@@ -101,7 +101,8 @@ public final class MediaListActivity extends Activity {
             root.addView(scroll, Ui.weighted(18));
             first.requestFocus();
         }
-        root.addView(Ui.footer(this, "◀ ▲ ▼ ▶", "yurish", "OK", "ochish", "BACK", "orqaga"),
+        root.addView(Ui.footer(this, "◀ ▲ ▼ ▶", getString(R.string.common_move),
+                "OK", getString(R.string.common_open), "BACK", getString(R.string.common_back)),
                 new LinearLayout.LayoutParams(-1, 52));
         setContentView(root);
     }

@@ -30,15 +30,15 @@ public final class SourceActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.SOURCE, 0xFF968AF3, 0xFF5548DD, "Qurilma"),
+        root.addView(Ui.header(this, Glyphs.SOURCE, 0xFF968AF3, 0xFF5548DD, getString(R.string.home_source)),
                 new LinearLayout.LayoutParams(-1, 72));
 
         List<Tile> tiles = new ArrayList<>();
         TvInputInfo tuner = first(TvInputInfo.TYPE_TUNER);
         TvInputInfo av = first(TvInputInfo.TYPE_COMPOSITE);
-        if (tuner != null) tiles.add(tile("Antenna TV", "Efir kanallari", Glyphs.LIVE_TV,
-                0xFF66A0F2, 0xFF2F63DD, tuner.getId(), TV));
-        if (av != null) tiles.add(tile("AV", "Sariq-oq-qizil kabel", Glyphs.SOURCE,
+        if (tuner != null) tiles.add(tile(getString(R.string.source_antenna), getString(R.string.home_live_tv_sub),
+                Glyphs.LIVE_TV, 0xFF66A0F2, 0xFF2F63DD, tuner.getId(), TV));
+        if (av != null) tiles.add(tile("AV", getString(R.string.source_av_sub), Glyphs.SOURCE,
                 0xFFF4B068, 0xFFE57C33, av.getId(), AV));
         // The input list comes back in no useful order; the trailing hardware number follows the
         // physical port order (HW6 = HDMI 1), so sort on it.
@@ -52,12 +52,13 @@ public final class SourceActivity extends Activity {
         for (TvInputInfo info : ports) {
             if (info.getType() != TvInputInfo.TYPE_HDMI || n >= HDMI_PORTS_SHOWN) continue;
             n++;
-            tiles.add(tile("HDMI " + n, n == 1 ? "Pristavka, konsol" : "Noutbuk, pleyer", Glyphs.SOURCE,
+            tiles.add(tile("HDMI " + n, getString(n == 1 ? R.string.source_hdmi1_sub : R.string.source_hdmi2_sub),
+                    Glyphs.SOURCE,
                     n == 1 ? 0xFF968AF3 : 0xFFBD7CEA, n == 1 ? 0xFF5548DD : 0xFF8538D2, info.getId(), HDMI[n - 1]));
         }
         if (tiles.isEmpty()) {
             // Not a TV-input device: fall back to whatever source menu the firmware offers.
-            Ui.start(this, "Qurilma", new Intent("android.intent.action.INPUT_SOURCE_ACTIVITY"));
+            Ui.start(this, getString(R.string.home_source), new Intent("android.intent.action.INPUT_SOURCE_ACTIVITY"));
             finish();
             return;
         }
@@ -68,7 +69,8 @@ public final class SourceActivity extends Activity {
         root.addView(new View(this), Ui.weighted(0));
         LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(-1, 52);
         footLp.topMargin = 14;
-        root.addView(Ui.footer(this, "◀ ▶", "tanlash", "OK", "ochish", "BACK", "orqaga"), footLp);
+        root.addView(Ui.footer(this, "◀ ▶", getString(R.string.common_select),
+                "OK", getString(R.string.common_open), "BACK", getString(R.string.common_back)), footLp);
         setContentView(root);
         tiles.get(0).requestFocus();
     }
@@ -97,11 +99,11 @@ public final class SourceActivity extends Activity {
         if (TV.equals(action)) switcher.putExtra("tunerMode", "dvbt"); // antenna, not cable
         if (!a.getPackageManager().queryBroadcastReceivers(switcher, 0).isEmpty()) {
             a.sendBroadcast(switcher);
-            Ui.start(a, "Qurilma", new Intent(Intent.ACTION_MAIN)
+            Ui.start(a, a.getString(R.string.home_source), new Intent(Intent.ACTION_MAIN)
                     .setComponent(new ComponentName(TV_PLAYER, TV_PLAYER_ROOT)));
             return;
         }
-        Ui.start(a, "Qurilma",
+        Ui.start(a, a.getString(R.string.home_source),
                 new Intent(Intent.ACTION_VIEW, TvContract.buildChannelUriForPassthroughInput(inputId))
                         .setComponent(new ComponentName(TV_PLAYER, TV_PLAYER_ROOT)),
                 new Intent(Intent.ACTION_VIEW, TvContract.buildChannelUriForPassthroughInput(inputId)));

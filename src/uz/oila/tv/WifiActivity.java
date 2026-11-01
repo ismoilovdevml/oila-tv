@@ -94,25 +94,26 @@ public final class WifiActivity extends Activity {
         WifiInfo info = on ? wm.getConnectionInfo() : null;
         String current = info != null && info.getNetworkId() != -1 ? unquote(info.getSSID()) : null;
 
-        toggle.title = on ? "Wi-Fi yoniq" : "Wi-Fi o'chiq";
-        toggle.subtitle = on ? "O'chirish uchun OK" : "Yoqish uchun OK";
+        toggle.title = getString(on ? R.string.wifi_on : R.string.wifi_off);
+        toggle.subtitle = getString(on ? R.string.wifi_ok_to_turn_off : R.string.wifi_ok_to_turn_on);
         toggle.invalidate();
 
         if (!on) {
-            state.setText("O'chiq");
-            name.setText("Wi-Fi o'chirilgan");
-            detail.setText("Internet uchun Wi-Fi'ni yoqing");
+            state.setText(R.string.wifi_state_off);
+            name.setText(R.string.wifi_disabled);
+            detail.setText(R.string.wifi_turn_on_hint);
         } else if (current != null) {
             int ip = info.getIpAddress();
-            state.setText("Ulangan");
+            state.setText(R.string.wifi_connected);
             name.setText(current);
-            detail.setText("Signal: " + signalWord(WifiManager.calculateSignalLevel(info.getRssi(), 5))
+            detail.setText(getString(R.string.wifi_signal,
+                    signalWord(WifiManager.calculateSignalLevel(info.getRssi(), 5)))
                     + (ip == 0 ? "" : "\nIP: " + (ip & 255) + "." + (ip >> 8 & 255) + "."
                             + (ip >> 16 & 255) + "." + (ip >> 24 & 255)));
         } else {
-            state.setText("Ulanmagan");
-            name.setText("Tarmoqni tanlang");
-            detail.setText("O'ngdagi ro'yxatdan tarmoqni tanlab, OK bosing");
+            state.setText(R.string.wifi_not_connected);
+            name.setText(R.string.wifi_choose_network);
+            detail.setText(R.string.wifi_choose_hint);
         }
         state.setTextColor(on && current != null ? GREEN : Ui.TEXT_DIM);
         rebuildList(on, current);
@@ -130,18 +131,19 @@ public final class WifiActivity extends Activity {
 
         list.removeAllViews();
         if (!on) {
-            list.addView(hintRow("Wi-Fi o'chiq — chapdagi tugma bilan yoqing"));
+            list.addView(hintRow(getString(R.string.wifi_list_off)));
             return;
         }
         if (nets.isEmpty()) {
-            list.addView(hintRow("Tarmoqlar qidirilmoqda…"));
+            list.addView(hintRow(getString(R.string.wifi_searching)));
             return;
         }
         for (final ScanResult r : nets) {
             boolean connected = r.SSID.equals(current);
             boolean secured = isSecured(r);
             NetRow row = new NetRow(this, r.SSID, WifiManager.calculateSignalLevel(r.level, 5), secured,
-                    connected ? "Ulangan" : secured ? "Parol bilan" : "Ochiq",
+                    getString(connected ? R.string.wifi_connected
+                            : secured ? R.string.wifi_net_secured : R.string.wifi_net_open),
                     connected ? GREEN : Ui.TEXT_DIM);
             row.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) { choose(r); }
@@ -185,14 +187,14 @@ public final class WifiActivity extends Activity {
     private void choose(ScanResult r) {
         WifiInfo info = wm.getConnectionInfo();
         if (info != null && r.SSID.equals(unquote(info.getSSID())) && info.getNetworkId() != -1) {
-            Toast.makeText(this, r.SSID + " — allaqachon ulangan", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.wifi_already_connected, r.SSID), Toast.LENGTH_SHORT).show();
             return;
         }
         WifiConfiguration saved = savedConfig(r.SSID);
         if (!isSecured(r)) {
             connect(saved != null ? saved.networkId : wm.addNetwork(config(r, null)), r.SSID);
         } else if (isEnterprise(r)) {
-            Toast.makeText(this, "Bu tarmoq turi qo'llab-quvvatlanmaydi", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.wifi_unsupported, Toast.LENGTH_LONG).show();
         } else {
             askPassword(r, saved);
         }
@@ -204,7 +206,7 @@ public final class WifiActivity extends Activity {
         pw.setTextSize(TypedValue.COMPLEX_UNIT_PX, 32);
         pw.setSingleLine(true);
         pw.setImeOptions(EditorInfo.IME_ACTION_GO);
-        pw.setHint(saved != null ? "Saqlangan parol uchun bo'sh qoldiring" : "Parol");
+        pw.setHint(saved != null ? R.string.wifi_password_keep_saved : R.string.wifi_password);
         LinearLayout box = new LinearLayout(this);
         box.setPadding(40, 16, 40, 0);
         box.addView(pw, new LinearLayout.LayoutParams(-1, -2));
@@ -212,22 +214,22 @@ public final class WifiActivity extends Activity {
         final AlertDialog d = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
                 .setTitle(r.SSID)
                 .setView(box)
-                .setPositiveButton("Ulanish", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.wifi_connect, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface di, int w) {
                         String p = pw.getText().toString();
                         if (p.isEmpty() && saved != null) {
                             connect(saved.networkId, r.SSID);
                         } else if (p.length() < 8 && !r.capabilities.contains("WEP")) {
-                            Toast.makeText(WifiActivity.this, "Parol kamida 8 belgi bo'lishi kerak",
+                            Toast.makeText(WifiActivity.this, R.string.wifi_password_too_short,
                                     Toast.LENGTH_LONG).show();
                         } else {
                             connect(wm.addNetwork(config(r, p)), r.SSID);
                         }
                     }
                 })
-                .setNegativeButton("Bekor qilish", null)
+                .setNegativeButton(R.string.wifi_cancel, null)
                 .create();
-        // Enter from the phone page (or the keyboard's Go key) presses "Ulanish".
+        // Enter from the phone page (or the keyboard's Go key) presses the Connect button.
         pw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent e) {
                 if (actionId != EditorInfo.IME_ACTION_GO) return false;
@@ -242,14 +244,13 @@ public final class WifiActivity extends Activity {
 
     private void connect(int netId, String ssid) {
         if (netId == -1) {
-            Toast.makeText(this, ssid + ": saqlab bo'lmadi. \"Barcha sozlamalar\" orqali urinib ko'ring",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.wifi_save_failed, ssid), Toast.LENGTH_LONG).show();
             return;
         }
         wm.disconnect();
         wm.enableNetwork(netId, true);
         wm.reconnect();
-        Toast.makeText(this, ssid + " — ulanmoqda…", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.wifi_connecting, ssid), Toast.LENGTH_SHORT).show();
     }
 
     private WifiConfiguration savedConfig(String ssid) {
@@ -292,8 +293,9 @@ public final class WifiActivity extends Activity {
         return s.length() > 1 && s.startsWith("\"") && s.endsWith("\"") ? s.substring(1, s.length() - 1) : s;
     }
 
-    private static String signalWord(int level) {
-        return level >= 4 ? "a'lo" : level == 3 ? "yaxshi" : level == 2 ? "o'rtacha" : "zaif";
+    private String signalWord(int level) {
+        return getString(level >= 4 ? R.string.wifi_signal_excellent : level == 3 ? R.string.wifi_signal_good
+                : level == 2 ? R.string.wifi_signal_fair : R.string.wifi_signal_weak);
     }
 
     // ---- UI ----
@@ -367,7 +369,8 @@ public final class WifiActivity extends Activity {
 
         LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(-1, 52);
         footLp.topMargin = 14;
-        root.addView(Ui.footer(this, "▲ ▼", "tarmoq", "OK", "ulanish", "BACK", "orqaga"), footLp);
+        root.addView(Ui.footer(this, "▲ ▼", getString(R.string.common_network), "OK",
+                getString(R.string.common_connect), "BACK", getString(R.string.common_back)), footLp);
         return root;
     }
 

@@ -12,6 +12,7 @@ import java.util.Locale;
 
 /** Interface language: three big choices, applied the moment OK is pressed. */
 public final class LanguageActivity extends Activity {
+    // Each language is listed under its own name, never translated.
     private static final String[][] LANGS = {
             { "uz-UZ", "O'zbekcha" }, { "ru-RU", "Русский" }, { "en-US", "English" } };
 
@@ -21,17 +22,18 @@ public final class LanguageActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         LinearLayout root = Ui.page(this);
-        root.addView(Ui.header(this, Glyphs.LANGUAGE, 0xFF66A0F2, 0xFF2F63DD, "Til"),
+        root.addView(Ui.header(this, Glyphs.LANGUAGE, 0xFF66A0F2, 0xFF2F63DD, getString(R.string.settings_language)),
                 new LinearLayout.LayoutParams(-1, 72));
         LinearLayout col = ListRow.column(this, root);
-        ListRow.section(col, "Televizor tilini tanlang");
+        ListRow.section(col, getString(R.string.language_choose));
         for (int i = 0; i < LANGS.length; i++) {
             final Locale l = Locale.forLanguageTag(LANGS[i][0]);
             rows[i] = ListRow.add(col, new ListRow(this, LANGS[i][1], null).onClick(new View.OnClickListener() {
                 @Override public void onClick(View v) { apply(l); }
             }));
         }
-        root.addView(Ui.footer(this, "▲ ▼", "tanlash", "OK", "qo'llash", "BACK", "orqaga"),
+        root.addView(Ui.footer(this, "▲ ▼", getString(R.string.common_select),
+                "OK", getString(R.string.common_apply), "BACK", getString(R.string.common_back)),
                 new LinearLayout.LayoutParams(-1, 52));
         setContentView(root);
         refresh();
@@ -41,7 +43,7 @@ public final class LanguageActivity extends Activity {
         String now = getResources().getConfiguration().getLocales().get(0).getLanguage();
         for (int i = 0; i < LANGS.length; i++) {
             boolean on = LANGS[i][0].startsWith(now);
-            rows[i].set(on ? "Tanlangan" : null, ListRow.GREEN);
+            rows[i].set(on ? getString(R.string.language_selected) : null, ListRow.GREEN);
             if (on) rows[i].requestFocus();
         }
     }
@@ -62,7 +64,7 @@ public final class LanguageActivity extends Activity {
                 Configuration.class.getField("userSetLocale").setBoolean(cfg, true);
                 am.getClass().getMethod("updatePersistentConfiguration", Configuration.class).invoke(am, cfg);
             } catch (Throwable second) {
-                Toast.makeText(this, "Tilni o'zgartirishga ruxsat yo'q", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.language_no_permission, Toast.LENGTH_LONG).show();
                 return;
             }
         }
