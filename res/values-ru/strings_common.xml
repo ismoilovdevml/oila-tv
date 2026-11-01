@@ -11,6 +11,8 @@
     <string name="common_toggle">вкл / выкл</string>
     <string name="common_network">сеть</string>
     <string name="common_connect">подключить</string>
+    <string name="common_key_red">КРАСНАЯ</string>
     <string name="common_key_green">ЗЕЛЁНАЯ</string>
     <string name="common_cannot_open">%1$s: не удалось открыть</string>
+    <string name="volume_muted">Звук выключен</string>
 </resources>

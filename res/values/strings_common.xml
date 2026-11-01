@@ -12,6 +12,8 @@
     <string name="common_toggle">yoqish / o\'chirish</string>
     <string name="common_network">tarmoq</string>
     <string name="common_connect">ulanish</string>
+    <string name="common_key_red">QIZIL</string>
     <string name="common_key_green">YASHIL</string>
     <string name="common_cannot_open">%1$s: ochib bo\'lmadi</string>
+    <string name="volume_muted">Ovoz o\'chirilgan</string>
 </resources>

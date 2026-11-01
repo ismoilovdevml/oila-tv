@@ -7,10 +7,22 @@ import android.view.accessibility.AccessibilityEvent;
 
 /**
  * Remote shortcuts that work on every screen: red opens YouTube, green opens our YouTube search,
- * SOURCE opens our input picker, MENU acts as HOME.
+ * SOURCE opens our input picker, MENU acts as HOME. While connected it also shows our volume card.
  */
 public final class KeyService extends AccessibilityService {
     private static final String YOUTUBE = "com.google.android.youtube.tv";
+    private VolumePanel volume;
+
+    @Override
+    protected void onServiceConnected() {
+        volume = new VolumePanel(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (volume != null) volume.release();
+        super.onDestroy();
+    }
 
     @Override
     protected boolean onKeyEvent(KeyEvent e) {

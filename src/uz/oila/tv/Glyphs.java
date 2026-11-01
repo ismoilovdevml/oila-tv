@@ -10,7 +10,8 @@ import android.graphics.Typeface;
 final class Glyphs {
     static final int NONE = -1, YOUTUBE = 0, LIVE_TV = 1, SOURCE = 2, NETFLIX = 3, WIFI = 4,
             GALLERY = 5, SETTINGS = 6, HOME = 7, LANGUAGE = 8, CLOCK = 9, BLUETOOTH = 10,
-            STORAGE = 11, INFO = 12, SLIDERS = 13, LOCK = 14, APPS = 15, NO_SIGNAL = 16, MUSIC = 17, BOOST = 18, PHONE = 19;
+            STORAGE = 11, INFO = 12, SLIDERS = 13, LOCK = 14, APPS = 15, NO_SIGNAL = 16, MUSIC = 17, BOOST = 18, PHONE = 19,
+            VOLUME = 20, VOLUME_OFF = 21;
 
     private static final Paint solid = new Paint(Paint.ANTI_ALIAS_FLAG);
     private static final Paint line = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -206,6 +207,27 @@ final class Glyphs {
                     float gx = 5 + (i % 2) * 26, gy = 5 + (i / 2) * 26;
                     r.set(gx, gy, gx + 20, gy + 20);
                     c.drawRoundRect(r, 6, 6, solid);
+                }
+                break;
+            case VOLUME:
+            case VOLUME_OFF:
+                p.reset();
+                p.moveTo(5, 20);
+                p.lineTo(15, 20);
+                p.lineTo(28, 8);
+                p.lineTo(28, 48);
+                p.lineTo(15, 36);
+                p.lineTo(5, 36);
+                p.close();
+                c.drawPath(p, solid);
+                if (g == VOLUME_OFF) {
+                    c.drawLine(36, 19, 50, 37, line);
+                    c.drawLine(50, 19, 36, 37, line);
+                } else {
+                    r.set(22, 17, 40, 39);
+                    c.drawArc(r, -55, 110, false, line);
+                    r.set(22, 7, 52, 49);
+                    c.drawArc(r, -55, 110, false, line);
                 }
                 break;
             case PHONE:

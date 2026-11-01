@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The launcher draws its own large volume card; turn off the stock thin bar. -->
+    <bool name="enable_volume_ui">false</bool>
+</resources>

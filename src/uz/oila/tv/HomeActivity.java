@@ -144,6 +144,7 @@ public final class HomeActivity extends Activity {
         footLp.topMargin = 14;
         root.addView(Ui.footer(this, "◀ ▲ ▼ ▶", getString(R.string.common_move),
                 "OK", getString(R.string.common_select),
+                getString(R.string.common_key_red), "YouTube",
                 getString(R.string.common_key_green), getString(R.string.home_youtube_search)), footLp);
         return root;
     }

@@ -4,6 +4,7 @@
 #   /vendor/overlay/KtcSettingEn/*.apk          English text for the vendor developer panel
 #   /vendor/overlay/OilaPower.apk               hold the power button = full power-off
 #     (top level: the boot-time scan for framework overlays does not look into subfolders)
+#   /vendor/overlay/OilaSystemUi/*.apk          no stock volume bar (the launcher draws its own)
 #   /vendor/stream/video.mp4                    boot video  (device/boot/bootvideo.mp4)
 #   boot-loader logo                            boot logo   (device/boot/bootlogo.jpg)
 #   /vendor/tvconfig/boot.ini MUSIC_ON=0        no boot jingle
@@ -19,6 +20,7 @@ A="adb -s $S shell"
 RC=/vendor/etc/init/oila-remote-fix.rc
 OV=/vendor/overlay/KtcSettingEn
 PW=/vendor/overlay/OilaPower.apk
+SV=/vendor/overlay/OilaSystemUi
 VIDEO=/vendor/stream/video.mp4
 TVCFG=/vendor/tvconfig            # its own read-write partition
 LOGO_SRC=$TVCFG/boot0.jpg         # must sit where the platform service may read it
@@ -38,13 +40,14 @@ case $MODE in
     overlays/build.sh >/dev/null
     tools/fapi/build.sh >/dev/null
     adb -s "$S" push device/oila-remote-fix.rc "$RC" >/dev/null
-    $A mkdir -p "$OV"; $A rm -rf /vendor/overlay/OilaPower
+    $A mkdir -p "$OV" "$SV"; $A rm -rf /vendor/overlay/OilaPower
     adb -s "$S" push overlays/ktc-setting-en/build/ktc-setting-en.apk "$OV/KtcSettingEn.apk" >/dev/null
     adb -s "$S" push overlays/android-power/build/android-power.apk "$PW" >/dev/null
+    adb -s "$S" push overlays/systemui-volume/build/systemui-volume.apk "$SV/OilaSystemUi.apk" >/dev/null
     backup "$VIDEO"
     adb -s "$S" push device/boot/bootvideo.mp4 "$VIDEO" >/dev/null
-    $A "chmod 644 $RC $OV/KtcSettingEn.apk $PW $VIDEO; chmod 755 $OV"
-    $A "restorecon $RC $VIDEO; restorecon $PW; restorecon -R $OV"
+    $A "chmod 644 $RC $OV/KtcSettingEn.apk $PW $SV/OilaSystemUi.apk $VIDEO; chmod 755 $OV $SV"
+    $A "restorecon $RC $VIDEO; restorecon $PW; restorecon -R $OV $SV"
     # Logo: the boot loader shows a cached copy until its db_table flag is cleared, which the
     # platform's own logo call does (and copies the file into place).
     backup "$LOGO_SRC"; backup "$TVCFG/boot.ini"
@@ -54,7 +57,7 @@ case $MODE in
     $A "sed -i 's/^MUSIC_ON = 1;/MUSIC_ON = 0;/' $TVCFG/boot.ini"
     ;;
   rollback)
-    $A "rm -f $RC $PW; rm -rf $OV /vendor/overlay/OilaPower"
+    $A "rm -f $RC $PW; rm -rf $OV $SV /vendor/overlay/OilaPower"
     $A "[ -e $VIDEO.bak.oila ] && cp -p $VIDEO.bak.oila $VIDEO || true"
     $A "[ -e $TVCFG/boot.ini.bak.oila ] && cp -p $TVCFG/boot.ini.bak.oila $TVCFG/boot.ini || true"
     $A "[ -e $LOGO_SRC.bak.oila ] && cp -p $LOGO_SRC.bak.oila $LOGO_SRC || true"

@@ -11,6 +11,8 @@
     <string name="common_toggle">on / off</string>
     <string name="common_network">network</string>
     <string name="common_connect">connect</string>
+    <string name="common_key_red">RED</string>
     <string name="common_key_green">GREEN</string>
     <string name="common_cannot_open">%1$s: could not open</string>
+    <string name="volume_muted">Sound off</string>
 </resources>
