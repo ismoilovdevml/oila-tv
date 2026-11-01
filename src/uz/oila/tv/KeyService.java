@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 
-/** Remote shortcuts that work on every screen: red opens YouTube, SOURCE opens our input picker. */
+/**
+ * Remote shortcuts that work on every screen: red opens YouTube, SOURCE opens our input picker,
+ * MENU acts as HOME.
+ */
 public final class KeyService extends AccessibilityService {
     private static final String YOUTUBE = "com.google.android.youtube.tv";
 
@@ -13,6 +16,11 @@ public final class KeyService extends AccessibilityService {
     protected boolean onKeyEvent(KeyEvent e) {
         Intent target;
         switch (e.getKeyCode()) {
+            case KeyEvent.KEYCODE_MENU:
+                if (e.getAction() == KeyEvent.ACTION_DOWN && e.getRepeatCount() == 0) {
+                    performGlobalAction(GLOBAL_ACTION_HOME);
+                }
+                return true;
             case KeyEvent.KEYCODE_PROG_RED:
                 target = getPackageManager().getLeanbackLaunchIntentForPackage(YOUTUBE);
                 if (target == null) target = getPackageManager().getLaunchIntentForPackage(YOUTUBE);
