@@ -41,4 +41,16 @@
     <string name="remote_sec_player">Плеер</string>
     <string name="remote_sec_numbers">Цифры</string>
     <string name="remote_noapp">Не удалось открыть</string>
+    <string name="remote_sensor">Сенсор</string>
+    <string name="remote_menu">Меню</string>
+    <string name="remote_vol_cap">ЗВУК</string>
+    <string name="remote_ch_cap">КАНАЛ</string>
+    <string name="remote_vol_level">Громкость</string>
+    <string name="remote_status_on">Подключено</string>
+    <string name="remote_last">Последняя</string>
+    <string name="remote_touch1">Проведите или нажмите</string>
+    <string name="remote_touch2">Нажатие — OK</string>
+    <string name="remote_list">Список</string>
+    <string name="remote_prev">Назад</string>
+    <string name="remote_ready">Готово</string>
 </resources>

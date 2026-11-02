@@ -41,4 +41,16 @@
     <string name="remote_sec_player">Player</string>
     <string name="remote_sec_numbers">Numbers</string>
     <string name="remote_noapp">Couldn\'t open the app</string>
+    <string name="remote_sensor">Touchpad</string>
+    <string name="remote_menu">Menu</string>
+    <string name="remote_vol_cap">VOLUME</string>
+    <string name="remote_ch_cap">CHANNEL</string>
+    <string name="remote_vol_level">Volume</string>
+    <string name="remote_status_on">Connected</string>
+    <string name="remote_last">Last</string>
+    <string name="remote_touch1">Swipe or tap</string>
+    <string name="remote_touch2">Tap = OK</string>
+    <string name="remote_list">List</string>
+    <string name="remote_prev">Prev</string>
+    <string name="remote_ready">Ready</string>
 </resources>

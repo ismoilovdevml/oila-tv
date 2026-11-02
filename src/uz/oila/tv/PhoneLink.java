@@ -3,6 +3,7 @@ package uz.oila.tv;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
+import android.media.AudioManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -39,7 +40,7 @@ final class PhoneLink implements Runnable {
     private static final int REMOTE_PORT = 8766;
     // Only these keycodes may be injected, so the page can never send arbitrary events.
     private static final java.util.Set<Integer> ALLOWED_KEYS = new java.util.HashSet<Integer>(java.util.Arrays.asList(
-            3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 26, 66, 67, 82, 85, 89, 90, 164));
+            3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 26, 66, 67, 82, 85, 89, 90, 164, 166, 167));
     private Socket remote; // cached connection to the daemon
     private static PhoneLink running;
     private final AtomicInteger open = new AtomicInteger();
@@ -193,6 +194,8 @@ final class PhoneLink implements Runnable {
             reply(out, "200 OK", "text/plain", sendKey(text.trim()) ? "ok" : "noremote");
         } else if (request[0].equals("POST") && path.equals("/app")) {
             reply(out, "200 OK", "text/plain", launchApp(text.trim()) ? "ok" : "noapp");
+        } else if (request[0].equals("GET") && path.equals("/state")) {
+            reply(out, "200 OK", "application/json", stateJson());
         } else if (request[0].equals("POST") && path.equals("/yt")) {
             reply(out, "200 OK", "text/plain", youtube(app, text.trim()) ? "ok" : "noapp");
         } else if (request[0].equals("POST") && (path.equals("/type") || path.equals("/enter"))) {
@@ -256,10 +259,29 @@ final class PhoneLink implements Runnable {
         return false;
     }
 
-    /** Launches a shortcut app (YouTube or Netflix) on the TV from the phone remote. */
+    /** Current music volume and mute state, so the remote can show a real level. */
+    private String stateJson() {
+        AudioManager am = (AudioManager) app.getSystemService(Context.AUDIO_SERVICE);
+        int max = am == null ? 1 : am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int vol = am == null ? 0 : am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        boolean muted = am != null && am.isStreamMute(AudioManager.STREAM_MUSIC);
+        return "{\"vol\":" + vol + ",\"max\":" + max + ",\"muted\":" + muted + "}";
+    }
+
+    /** Launches a shortcut app or one of our own screens on the TV from the phone remote. */
     private boolean launchApp(String which) {
+        if (which.equals("set") || which.equals("src")) {
+            try {
+                app.startActivity(new Intent(app, which.equals("set") ? SettingsActivity.class : SourceActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                return true;
+            } catch (RuntimeException e) {
+                return false;
+            }
+        }
         String pkg = which.equals("yt") ? "com.google.android.youtube.tv"
-                : which.equals("nf") ? "com.netflix.mediaclient" : null;
+                : which.equals("nf") ? "com.netflix.mediaclient"
+                : which.equals("itv") ? "uz.i_tv.player" : null;
         if (pkg == null) return false;
         Intent i = app.getPackageManager().getLeanbackLaunchIntentForPackage(pkg);
         if (i == null) i = app.getPackageManager().getLaunchIntentForPackage(pkg);
@@ -309,24 +331,60 @@ final class PhoneLink implements Runnable {
             + "#s{margin-top:14px;min-height:1.4em;color:#9aa3b2}a.link{display:block;text-align:center;"
             + "margin-top:18px;color:#5cb8e8;font-size:18px}</style>";
 
-    // Compact remote that fits one phone screen without scrolling: app shortcuts, a d-pad cross
-    // with OK, then rows for back/home/volume, playback and a 5-column number pad.
-    private static final String REMOTE_STYLE = "<style>*{box-sizing:border-box}"
-            + "body{height:100vh;display:flex;flex-direction:column;gap:8px;padding:10px 12px}"
-            + ".bar{display:flex;align-items:center;gap:10px}.bar h1{font-size:18px;margin:0;flex:1}"
-            + ".k{color:#fff;background:#2a3142;border:0;border-radius:13px;font-weight:700;"
-            + "-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}"
-            + ".k:active{background:#3a4360}.pwr{width:44px;height:44px;font-size:20px;border-radius:50%;background:#3a2330}"
-            + ".apps{display:flex;gap:8px}.app{flex:1;padding:14px 0;border:0;border-radius:13px;font-size:18px;"
-            + "font-weight:700;color:#fff;-webkit-tap-highlight-color:transparent}.app:active{filter:brightness(1.3)}"
-            + ".yt{background:#e53935}.nf{background:#b1060f}"
-            + ".pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"
-            + "grid-template-areas:'. up .' 'left ok right' '. down .'}.pad .k{font-size:26px;padding:16px 0}"
-            + ".up{grid-area:up}.left{grid-area:left}.ok{grid-area:ok;background:#2f63dd;font-size:22px}"
-            + ".right{grid-area:right}.down{grid-area:down}.row{display:flex;gap:8px}.row .k{flex:1;padding:13px 0;font-size:18px}"
-            + ".nums{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.nums .k{padding:12px 0;font-size:20px}"
-            + "a.link{text-align:center;color:#5cb8e8;font-size:16px;text-decoration:none;padding:4px}"
-            + "#s{min-height:1em;color:#9aa3b2;text-align:center;font-size:14px}</style>";
+    // "Pro pult" design (design/Pro pult-html): a framed panel with a circular d-pad, segmented
+    // D-pad / Sensor / Numbers views, a volume cluster with a real level bar, playback and shortcuts.
+    private static final String REMOTE_HEAD = "<meta charset=utf-8>"
+            + "<meta name=viewport content='width=device-width,initial-scale=1'><title>Oila TV</title>"
+            + "<link rel=stylesheet href='https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap'>"
+            + "<style>*{box-sizing:border-box}body{margin:0;background:#07090D;color:#E8EAF0;"
+            + "font-family:Manrope,system-ui,-apple-system,sans-serif}"
+            + "button{font-family:inherit;border:0;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent;"
+            + "transition:transform .08s,background-color .15s}button:active{transform:scale(.95)}"
+            + ".frame{max-width:460px;margin:0 auto;padding:14px}"
+            + ".panel{padding:18px;border-radius:32px;background:#10131A;border:1px solid #1F2430;display:flex;flex-direction:column;gap:12px}"
+            + ".top{display:flex;align-items:center;justify-content:space-between;gap:12px}"
+            + ".top h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em}"
+            + ".stat{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#A3ABBD;margin-top:4px}"
+            + ".dot{width:8px;height:8px;border-radius:50%;background:#34D399}"
+            + ".ic{width:44px;height:44px;border-radius:14px;background:#1A1F29;color:#C9CFDB;display:flex;align-items:center;justify-content:center}"
+            + ".pwr{width:48px;height:48px;border-radius:50%;background:#2A1519;border:1px solid #4A2128;color:#FF7A7A;display:flex;align-items:center;justify-content:center}"
+            + ".srow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border-radius:14px;background:#161A22;border:1px solid #1F2430;font-size:13px}"
+            + ".srow .l{color:#A3ABBD;font-weight:600}.srow b{font-weight:800}"
+            + ".meta{display:flex;align-items:center;gap:10px;font-weight:700;color:#C9CFDB;font-variant-numeric:tabular-nums}"
+            + ".vsep{width:1px;height:14px;background:#2E3546}"
+            + ".apps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 52px;gap:8px}"
+            + ".app{height:52px;border-radius:16px;color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.05}"
+            + ".yt{background:#CC1F1A}.nf{background:#B20710}.itv{background:#146EB4;font-size:14px}"
+            + ".tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:14px;background:#161A22;border:1px solid #1F2430}"
+            + ".tab{height:36px;border-radius:10px;font-size:13px;font-weight:700;background:transparent;color:#A3ABBD}"
+            + ".tab.on{background:#3D6BFF;color:#fff}"
+            + ".stage{height:280px;display:flex;align-items:center;justify-content:center}"
+            + ".dpad{position:relative;width:276px;height:276px;border-radius:50%;background:#161A22;border:1px solid #232938}"
+            + ".dpad button{position:absolute;background:transparent;color:#E8EAF0;display:flex;align-items:center;justify-content:center}"
+            + ".du{top:8px;left:98px;width:80px;height:72px;border-radius:22px}.dd{bottom:8px;left:98px;width:80px;height:72px;border-radius:22px}"
+            + ".dl{left:8px;top:98px;width:72px;height:80px;border-radius:22px}.dr{right:8px;top:98px;width:72px;height:80px;border-radius:22px}"
+            + ".ok{left:82px;top:82px;width:112px;height:112px;border-radius:50%;background:#3D6BFF;color:#fff;font-size:26px;font-weight:800;border:6px solid #10131A}"
+            + ".touch{width:100%;height:276px;border-radius:28px;background:#161A22;border:1.5px dashed #2E3546;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#C9CFDB}"
+            + ".touch b{font-size:16px;font-weight:800;color:#E8EAF0}.touch span{font-size:13px;font-weight:600;color:#A3ABBD}"
+            + ".nums{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}"
+            + ".num{height:61px;border-radius:16px;background:#1A1F29;border:1px solid #232938;font-weight:800;font-variant-numeric:tabular-nums;font-size:22px;color:#E8EAF0}.num.sm{font-size:13px}"
+            + ".nav{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}"
+            + ".navb{height:52px;border-radius:16px;background:#1A1F29;color:#E8EAF0;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:700}"
+            + ".vrow{display:flex;align-items:stretch;justify-content:space-between;gap:12px}"
+            + ".vcol{width:76px;height:150px;border-radius:38px;background:#1A1F29;border:1px solid #232938;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:4px}"
+            + ".vcol button{width:66px;height:54px;border-radius:30px;background:transparent;color:#E8EAF0;display:flex;align-items:center;justify-content:center}"
+            + ".vcol span{font-size:11px;font-weight:800;letter-spacing:.12em;color:#A3ABBD}"
+            + ".vmid{flex-grow:1;display:flex;flex-direction:column;justify-content:space-between;gap:10px}"
+            + ".vcard{padding:12px 14px;border-radius:18px;background:#161A22;border:1px solid #1F2430;display:flex;flex-direction:column;gap:10px}"
+            + ".vtop{display:flex;align-items:baseline;justify-content:space-between;font-size:12px;font-weight:700;color:#A3ABBD}"
+            + ".vtop b{font-size:18px;font-weight:800;color:#E8EAF0;font-variant-numeric:tabular-nums}"
+            + ".vbar{height:6px;border-radius:3px;background:#262C3A;overflow:hidden}.vfill{height:6px;border-radius:3px;background:#3D6BFF;width:0}"
+            + ".mbtn{height:56px;border-radius:18px;background:#1A1F29;color:#E8EAF0;display:flex;align-items:center;justify-content:center;width:100%}"
+            + ".mbtn.on{background:#3A1E24;color:#FF8A8A}"
+            + ".play{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:6px;border-radius:20px;background:#161A22;border:1px solid #1F2430}"
+            + ".pbtn{height:48px;border-radius:14px;background:transparent;color:#C9CFDB;display:flex;align-items:center;justify-content:center}.pbtn.mid{background:#232938;color:#fff}"
+            + ".kbd{height:52px;border-radius:16px;background:#161A22;border:1px solid #232938;color:#7EA0FF;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:700;text-decoration:none}"
+            + "#s{min-height:1em;color:#A3ABBD;text-align:center;font-size:13px}[hidden]{display:none}</style>";
 
     /** The phone page in the TV's current language; JS strings are passed through {@link #js}. */
     private String page() {
@@ -354,42 +412,137 @@ final class PhoneLink implements Runnable {
                 + "</script></body></html>";
     }
 
+    // Line-drawn icons from the Pro pult design (stroke = currentColor); single quotes avoid escaping.
+    private static String svg(String inner, String extra) {
+        return "<svg width=22 height=22 viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' "
+                + "stroke-linecap='round' stroke-linejoin='round' " + extra + ">" + inner + "</svg>";
+    }
+    private static final String IC_INPUT = svg("<rect x=3 y=4 width=18 height=13 rx=2/><path d='M8 21h8M12 17v4'/>", ""),
+            IC_POWER = svg("<path d='M12 3v9'/><path d='M6.3 6.3a8 8 0 1 0 11.4 0'/>", ""),
+            IC_UP = svg("<path d='m6 15 6-6 6 6'/>", ""), IC_DOWN = svg("<path d='m6 9 6 6 6-6'/>", ""),
+            IC_LEFT = svg("<path d='m15 6-6 6 6 6'/>", ""), IC_RIGHT = svg("<path d='m9 6 6 6-6 6'/>", ""),
+            IC_BACK = svg("<path d='M9 14 4 9l5-5'/><path d='M4 9h11a5 5 0 0 1 0 10h-3'/>", ""),
+            IC_HOME = svg("<path d='M3 10.5 12 3l9 7.5'/><path d='M5 9.5V21h14V9.5'/>", ""),
+            IC_MENU = svg("<path d='M4 7h16M4 12h16M4 17h16'/>", ""),
+            IC_PLUS = svg("<path d='M12 5v14M5 12h14'/>", ""), IC_MINUS = svg("<path d='M5 12h14'/>", ""),
+            IC_MUTE = svg("<path d='M11 5 6 9H3v6h3l5 4z'/><path d='m22 9-6 6M16 9l6 6'/>", ""),
+            IC_REW = svg("<path d='M11 19 2 12l9-7z'/><path d='M22 19l-9-7 9-7z'/>", "fill='currentColor'"),
+            IC_FF = svg("<path d='m13 19 9-7-9-7z'/><path d='m2 19 9-7-9-7z'/>", "fill='currentColor'"),
+            IC_PLAY = "<span id=pico>" + svg("<path d='M7 4v16l13-8z'/>", "fill='currentColor'") + "</span>",
+            IC_KBD = svg("<rect x=2 y=6 width=20 height=12 rx=2/><path d='M7 14h10M6 10h.01M10 10h.01M14 10h.01M18 10h.01'/>", "");
+
     /**
-     * A complete on-screen remote that fits one phone screen: power, YouTube/Netflix, the d-pad,
-     * back/home/volume, playback and a number pad. Keys post to /key; app shortcuts post to /app.
+     * The Pro pult remote: a framed panel with status, app shortcuts, a segmented d-pad / touch /
+     * number view, a volume cluster with a real level bar, playback and a keyboard link.
      */
     private String remotePage() {
-        return "<!doctype html><html lang=" + lang() + "><head>" + STYLE + REMOTE_STYLE + "</head><body>"
-                + "<div class=bar><h1>" + html(app.getString(R.string.remote_title)) + "</h1>"
-                + "<button class='k pwr' data-k=26>⏻</button></div>"
-                + "<div class=apps><button class='app yt' data-app=yt>YouTube</button>"
-                + "<button class='app nf' data-app=nf>Netflix</button></div>"
-                + "<div class=pad>"
-                + k("up", 19, "▲") + k("ok", 23, "OK")
-                + k("left", 21, "◀") + k("right", 22, "▶") + k("down", 20, "▼") + "</div>"
-                + "<div class=row>" + k("", 4, "↩") + k("", 3, "⌂")
-                + k("", 25, "🔉−") + k("", 164, "🔇") + k("", 24, "🔊+") + "</div>"
-                + "<div class=row>" + k("", 89, "⏪") + k("", 85, "⏯") + k("", 90, "⏩") + "</div>"
-                + "<div class=nums>"
-                + k("", 8, "1") + k("", 9, "2") + k("", 10, "3") + k("", 11, "4") + k("", 12, "5")
-                + k("", 13, "6") + k("", 14, "7") + k("", 15, "8") + k("", 16, "9") + k("", 7, "0") + "</div>"
-                + "<a class=link href='/?k=" + token(app) + "'>⌨ "
-                + html(app.getString(R.string.remote_type)) + "</a>"
-                + "<div id=s></div><script>"
-                + "var k=new URLSearchParams(location.search).get('k'),s=document.getElementById('s');"
-                + "function post(p,b){return fetch(p+'?k='+encodeURIComponent(k),{method:'POST',body:b})"
-                + ".then(function(r){return r.text()}).then(function(r){s.textContent="
-                + "r=='noremote'?" + js(R.string.page_offline) + ":r=='noapp'?" + js(R.string.remote_noapp)
-                + ":'';}).catch(function(){})}"
-                + "document.querySelectorAll('[data-k]').forEach(function(b){"
-                + "b.addEventListener('click',function(){post('/key',b.getAttribute('data-k'))});});"
-                + "document.querySelectorAll('[data-app]').forEach(function(b){"
-                + "b.addEventListener('click',function(){post('/app',b.getAttribute('data-app'))});});"
-                + "</script></body></html>";
+        String t = token(app);
+        return "<!doctype html><html lang=" + lang() + "><head>" + REMOTE_HEAD + "</head><body><div class=frame>"
+                + "<div class=panel>"
+                + "<div class=top><div><h1>Oila TV</h1><div class=stat><span class=dot></span><span>"
+                + html(app.getString(R.string.remote_status_on)) + " · TV</span></div></div>"
+                + "<div style='display:flex;gap:10px'>"
+                + "<button class=ic data-app=src data-l='" + a(R.string.home_source) + "'>" + IC_INPUT + "</button>"
+                + "<button class=pwr data-k=26 data-l='" + a(R.string.remote_status_on) + "'>" + IC_POWER + "</button></div></div>"
+                + "<div class=srow><div style='display:flex;gap:8px;min-width:0'><span class=l>"
+                + html(app.getString(R.string.remote_last)) + "</span><b id=last>" + html(app.getString(R.string.remote_ready))
+                + "</b></div><div class=meta><span>" + html(app.getString(R.string.remote_sec_volume))
+                + " <b id=vol>–</b></span></div></div>"
+                + "<div class=apps>"
+                + "<button class='app yt' data-app=yt data-l=YouTube>YouTube</button>"
+                + "<button class='app nf' data-app=nf data-l=Netflix>Netflix</button>"
+                + "<button class='app itv' data-app=itv data-l='" + a(R.string.home_live_tv) + "'>"
+                + html(app.getString(R.string.home_live_tv)) + "</button>"
+                + "<button class=ic data-app=set data-l='" + a(R.string.home_settings) + "'>" + IC_MENU + "</button></div>"
+                + "<div class=tabs><button class='tab on' data-tab=d>D-pad</button>"
+                + "<button class=tab data-tab=t>" + html(app.getString(R.string.remote_sensor)) + "</button>"
+                + "<button class=tab data-tab=n>" + html(app.getString(R.string.remote_sec_numbers)) + "</button></div>"
+                + "<div class=stage>"
+                + "<div id=vd class=dpad>"
+                + "<button class=du data-k=19 data-l='▲'>" + IC_UP + "</button>"
+                + "<button class=dd data-k=20 data-l='▼'>" + IC_DOWN + "</button>"
+                + "<button class=dl data-k=21 data-l='◀'>" + IC_LEFT + "</button>"
+                + "<button class=dr data-k=22 data-l='▶'>" + IC_RIGHT + "</button>"
+                + "<button class=ok data-k=23 data-l=OK>OK</button></div>"
+                + "<button id=vt hidden class=touch data-k=23 data-l=OK><b>"
+                + html(app.getString(R.string.remote_touch1)) + "</b><span>"
+                + html(app.getString(R.string.remote_touch2)) + "</span></button>"
+                + "<div id=vn hidden class=nums>"
+                + num(8, "1") + num(9, "2") + num(10, "3") + num(11, "4") + num(12, "5") + num(13, "6")
+                + num(14, "7") + num(15, "8") + num(16, "9")
+                + "<button class='num sm' data-k=82 data-l='" + a(R.string.remote_list) + "'>"
+                + html(app.getString(R.string.remote_list)) + "</button>"
+                + num(7, "0")
+                + "<button class='num sm' data-k=4 data-l='" + a(R.string.remote_prev) + "'>"
+                + html(app.getString(R.string.remote_prev)) + "</button></div></div>"
+                + "<div class=nav>"
+                + "<button class=navb data-k=4 data-l='" + a(R.string.remote_back) + "'>" + IC_BACK + "<span>"
+                + html(app.getString(R.string.remote_back)) + "</span></button>"
+                + "<button class=navb data-k=3 data-l='" + a(R.string.remote_home) + "'>" + IC_HOME + "<span>"
+                + html(app.getString(R.string.remote_home)) + "</span></button>"
+                + "<button class=navb data-k=82 data-l='" + a(R.string.remote_menu) + "'>" + IC_MENU + "<span>"
+                + html(app.getString(R.string.remote_menu)) + "</span></button></div>"
+                + "<div class=vrow>"
+                + "<div class=vcol><button data-k=24 data-vol data-l='" + a(R.string.remote_sec_volume) + " +'>" + IC_PLUS + "</button>"
+                + "<span>" + html(app.getString(R.string.remote_vol_cap)) + "</span>"
+                + "<button data-k=25 data-vol data-l='" + a(R.string.remote_sec_volume) + " −'>" + IC_MINUS + "</button></div>"
+                + "<div class=vmid><div class=vcard><div class=vtop><span>"
+                + html(app.getString(R.string.remote_vol_level)) + "</span><b id=vol2>–</b></div>"
+                + "<div class=vbar><div id=vfill class=vfill></div></div></div>"
+                + "<button id=mute class=mbtn data-k=164 data-vol data-l='" + a(R.string.volume_muted) + "'>" + IC_MUTE + "</button></div>"
+                + "<div class=vcol><button data-k=166 data-l='" + a(R.string.remote_ch_cap) + " +'>" + IC_UP + "</button>"
+                + "<span>" + html(app.getString(R.string.remote_ch_cap)) + "</span>"
+                + "<button data-k=167 data-l='" + a(R.string.remote_ch_cap) + " −'>" + IC_DOWN + "</button></div></div>"
+                + "<div class=play><button class=pbtn data-k=89 data-l='⏪'>" + IC_REW + "</button>"
+                + "<button id=play class='pbtn mid' data-k=85 data-l='⏯'>" + IC_PLAY + "</button>"
+                + "<button class=pbtn data-k=90 data-l='⏩'>" + IC_FF + "</button></div>"
+                + "<a class=kbd href='/?k=" + t + "'>" + IC_KBD + "<span>"
+                + html(app.getString(R.string.remote_type)) + "</span></a>"
+                + "<div id=s></div></div></div>" + remoteScript() + "</body></html>";
     }
 
-    private static String k(String cls, int code, String label) {
-        return "<button class='k " + cls + "' data-k=" + code + ">" + label + "</button>";
+    private static String num(int code, String label) {
+        return "<button class=num data-k=" + code + " data-l='" + label + "'>" + label + "</button>";
+    }
+
+    /** Client logic: tab switching, posting keys/apps, the live volume bar and the swipe touchpad. */
+    private String remoteScript() {
+        return "<script>var k=new URLSearchParams(location.search).get('k'),s=document.getElementById('s');"
+                + "function post(p,b){return fetch(p+'?k='+encodeURIComponent(k),{method:'POST',body:b})"
+                + ".then(function(r){return r.text()}).then(function(r){if(r=='noremote')s.textContent="
+                + js(R.string.page_offline) + ";else if(r=='noapp')s.textContent=" + js(R.string.remote_noapp)
+                + ";else s.textContent='';return r}).catch(function(){})}"
+                + "function st(){fetch('/state?k='+encodeURIComponent(k)).then(function(r){return r.json()})"
+                + ".then(function(j){var p=j.muted?0:Math.round(j.vol*100/j.max);"
+                + "document.getElementById('vol').textContent=j.muted?'0':j.vol;"
+                + "document.getElementById('vol2').textContent=j.muted?'0':j.vol;"
+                + "document.getElementById('vfill').style.width=p+'%';"
+                + "document.getElementById('mute').classList.toggle('on',j.muted)}).catch(function(){})}"
+                + "document.querySelectorAll('[data-k]').forEach(function(b){b.addEventListener('click',function(){"
+                + "var l=b.getAttribute('data-l');if(l)document.getElementById('last').textContent=l;"
+                + "post('/key',b.getAttribute('data-k')).then(function(){if(b.hasAttribute('data-vol'))setTimeout(st,120)});"
+                + "if(b.id=='play'){document.getElementById('pico').innerHTML=document.getElementById('pico').dataset.p=="
+                + "'1'?" + jsLit("<svg width=22 height=22 viewBox='0 0 24 24' fill='currentColor'><path d='M7 4v16l13-8z'/></svg>")
+                + ":" + jsLit("<svg width=22 height=22 viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round'><path d='M8 5v14M16 5v14'/></svg>")
+                + ";document.getElementById('pico').dataset.p=document.getElementById('pico').dataset.p=='1'?'0':'1'}});});"
+                + "document.querySelectorAll('[data-app]').forEach(function(b){b.addEventListener('click',function(){"
+                + "var l=b.getAttribute('data-l');if(l)document.getElementById('last').textContent=l;"
+                + "post('/app',b.getAttribute('data-app'))});});"
+                + "var views={d:'vd',t:'vt',n:'vn'};document.querySelectorAll('[data-tab]').forEach(function(b){"
+                + "b.addEventListener('click',function(){var m=b.getAttribute('data-tab');"
+                + "document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x==b)});"
+                + "for(var key in views){document.getElementById(views[key]).hidden=key!=m}})});"
+                + "var tp=document.getElementById('vt'),sx=0,sy=0,mv=0;"
+                + "tp.addEventListener('touchstart',function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY;mv=0},{passive:true});"
+                + "tp.addEventListener('touchend',function(e){var t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;"
+                + "if(Math.abs(dx)<24&&Math.abs(dy)<24){post('/key','23');return}"
+                + "var c=Math.abs(dx)>Math.abs(dy)?(dx>0?'22':'21'):(dy>0?'20':'19');post('/key',c)});"
+                + "st();setInterval(st,5000);</script>";
+    }
+
+    /** A resource string as an attribute value: HTML-escaped and never breaking the single quotes. */
+    private String a(int id) {
+        return html(app.getString(id));
     }
 
     private String denied() {
@@ -405,6 +558,11 @@ final class PhoneLink implements Runnable {
     private static String html(String s) {
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
                 .replace("\"", "&quot;").replace("'", "&#39;");
+    }
+
+    /** A plain string as a double-quoted JS literal, safe inside a script element. */
+    private static String jsLit(String v) {
+        return "\"" + v.replace("\\", "\\\\").replace("\"", "\\\"").replace("<", "\\u003c") + "\"";
     }
 
     /** A resource string as a double-quoted JS literal, safe inside a script element. */

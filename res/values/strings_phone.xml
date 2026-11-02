@@ -42,4 +42,16 @@
     <string name="remote_sec_player">Pleyer</string>
     <string name="remote_sec_numbers">Raqamlar</string>
     <string name="remote_noapp">Ilova ochilmadi</string>
+    <string name="remote_sensor">Sensor</string>
+    <string name="remote_menu">Menyu</string>
+    <string name="remote_vol_cap">OVOZ</string>
+    <string name="remote_ch_cap">KANAL</string>
+    <string name="remote_vol_level">Ovoz darajasi</string>
+    <string name="remote_status_on">Ulangan</string>
+    <string name="remote_last">Oxirgi buyruq</string>
+    <string name="remote_touch1">Suring yoki bosing</string>
+    <string name="remote_touch2">Bir marta bosish — OK</string>
+    <string name="remote_list">Ro\'yxat</string>
+    <string name="remote_prev">Oldingi</string>
+    <string name="remote_ready">Tayyor</string>
 </resources>
