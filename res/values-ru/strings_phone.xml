@@ -37,4 +37,8 @@
     <string name="remote_back">Назад</string>
     <string name="remote_home">Главная</string>
     <string name="remote_type">К вводу текста</string>
+    <string name="remote_sec_volume">Звук</string>
+    <string name="remote_sec_player">Плеер</string>
+    <string name="remote_sec_numbers">Цифры</string>
+    <string name="remote_noapp">Не удалось открыть</string>
 </resources>

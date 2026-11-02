@@ -38,8 +38,8 @@ final class PhoneLink implements Runnable {
     // The root input daemon (tools/remote) listens here and injects keys system-wide.
     private static final int REMOTE_PORT = 8766;
     // Only these keycodes may be injected, so the page can never send arbitrary events.
-    private static final java.util.Set<Integer> ALLOWED_KEYS = new java.util.HashSet<Integer>(
-            java.util.Arrays.asList(3, 4, 19, 20, 21, 22, 23, 24, 25, 164, 66, 67, 82, 85));
+    private static final java.util.Set<Integer> ALLOWED_KEYS = new java.util.HashSet<Integer>(java.util.Arrays.asList(
+            3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 26, 66, 67, 82, 85, 89, 90, 164));
     private Socket remote; // cached connection to the daemon
     private static PhoneLink running;
     private final AtomicInteger open = new AtomicInteger();
@@ -191,6 +191,8 @@ final class PhoneLink implements Runnable {
             reply(out, "200 OK", "text/html", remotePage());
         } else if (request[0].equals("POST") && path.equals("/key")) {
             reply(out, "200 OK", "text/plain", sendKey(text.trim()) ? "ok" : "noremote");
+        } else if (request[0].equals("POST") && path.equals("/app")) {
+            reply(out, "200 OK", "text/plain", launchApp(text.trim()) ? "ok" : "noapp");
         } else if (request[0].equals("POST") && path.equals("/yt")) {
             reply(out, "200 OK", "text/plain", youtube(app, text.trim()) ? "ok" : "noapp");
         } else if (request[0].equals("POST") && (path.equals("/type") || path.equals("/enter"))) {
@@ -254,6 +256,23 @@ final class PhoneLink implements Runnable {
         return false;
     }
 
+    /** Launches a shortcut app (YouTube or Netflix) on the TV from the phone remote. */
+    private boolean launchApp(String which) {
+        String pkg = which.equals("yt") ? "com.google.android.youtube.tv"
+                : which.equals("nf") ? "com.netflix.mediaclient" : null;
+        if (pkg == null) return false;
+        Intent i = app.getPackageManager().getLeanbackLaunchIntentForPackage(pkg);
+        if (i == null) i = app.getPackageManager().getLaunchIntentForPackage(pkg);
+        if (i == null) return false;
+        try {
+            app.startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            return true;
+        } catch (RuntimeException e) {
+            Log.w(TAG, "launch " + pkg + " failed: " + e);
+            return false;
+        }
+    }
+
     private static String param(String query, String name) {
         for (String pair : query.split("&")) {
             if (pair.startsWith(name + "=")) return pair.substring(name.length() + 1);
@@ -290,15 +309,24 @@ final class PhoneLink implements Runnable {
             + "#s{margin-top:14px;min-height:1.4em;color:#9aa3b2}a.link{display:block;text-align:center;"
             + "margin-top:18px;color:#5cb8e8;font-size:18px}</style>";
 
-    // Grid for the d-pad remote: a 3x3 cross with OK in the middle, then wide rows for the rest.
-    private static final String REMOTE_STYLE = "<style>.pad{display:grid;max-width:360px;margin:8px auto;"
-            + "grid-template-columns:repeat(3,1fr);gap:10px;"
-            + "grid-template-areas:'. up .' 'left ok right' '. down .'}.k{font-size:28px;font-weight:700;"
-            + "color:#fff;background:#2a3142;border:0;border-radius:16px;padding:26px 0;-webkit-user-select:none;"
-            + "user-select:none;-webkit-tap-highlight-color:transparent}.k:active{background:#3a4360}"
-            + ".up{grid-area:up}.left{grid-area:left}.ok{grid-area:ok;background:#2f63dd}.right{grid-area:right}"
-            + ".down{grid-area:down}.row{display:flex;gap:10px;max-width:360px;margin:10px auto}"
-            + ".wide{flex:1;padding:18px 0;font-size:20px}</style>";
+    // Compact remote that fits one phone screen without scrolling: app shortcuts, a d-pad cross
+    // with OK, then rows for back/home/volume, playback and a 5-column number pad.
+    private static final String REMOTE_STYLE = "<style>*{box-sizing:border-box}"
+            + "body{height:100vh;display:flex;flex-direction:column;gap:8px;padding:10px 12px}"
+            + ".bar{display:flex;align-items:center;gap:10px}.bar h1{font-size:18px;margin:0;flex:1}"
+            + ".k{color:#fff;background:#2a3142;border:0;border-radius:13px;font-weight:700;"
+            + "-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}"
+            + ".k:active{background:#3a4360}.pwr{width:44px;height:44px;font-size:20px;border-radius:50%;background:#3a2330}"
+            + ".apps{display:flex;gap:8px}.app{flex:1;padding:14px 0;border:0;border-radius:13px;font-size:18px;"
+            + "font-weight:700;color:#fff;-webkit-tap-highlight-color:transparent}.app:active{filter:brightness(1.3)}"
+            + ".yt{background:#e53935}.nf{background:#b1060f}"
+            + ".pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"
+            + "grid-template-areas:'. up .' 'left ok right' '. down .'}.pad .k{font-size:26px;padding:16px 0}"
+            + ".up{grid-area:up}.left{grid-area:left}.ok{grid-area:ok;background:#2f63dd;font-size:22px}"
+            + ".right{grid-area:right}.down{grid-area:down}.row{display:flex;gap:8px}.row .k{flex:1;padding:13px 0;font-size:18px}"
+            + ".nums{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.nums .k{padding:12px 0;font-size:20px}"
+            + "a.link{text-align:center;color:#5cb8e8;font-size:16px;text-decoration:none;padding:4px}"
+            + "#s{min-height:1em;color:#9aa3b2;text-align:center;font-size:14px}</style>";
 
     /** The phone page in the TV's current language; JS strings are passed through {@link #js}. */
     private String page() {
@@ -326,37 +354,42 @@ final class PhoneLink implements Runnable {
                 + "</script></body></html>";
     }
 
-    /** A full on-screen remote: d-pad, OK, Back, Home and volume, each posting a keycode to /key. */
+    /**
+     * A complete on-screen remote that fits one phone screen: power, YouTube/Netflix, the d-pad,
+     * back/home/volume, playback and a number pad. Keys post to /key; app shortcuts post to /app.
+     */
     private String remotePage() {
         return "<!doctype html><html lang=" + lang() + "><head>" + STYLE + REMOTE_STYLE + "</head><body>"
-                + "<h1>" + html(app.getString(R.string.remote_title)) + "</h1>"
+                + "<div class=bar><h1>" + html(app.getString(R.string.remote_title)) + "</h1>"
+                + "<button class='k pwr' data-k=26>⏻</button></div>"
+                + "<div class=apps><button class='app yt' data-app=yt>YouTube</button>"
+                + "<button class='app nf' data-app=nf>Netflix</button></div>"
                 + "<div class=pad>"
-                + btn("up", "19", "▲") + btn("ok", "23", "OK")
-                + btn("left", "21", "◀") + btn("right", "22", "▶")
-                + btn("down", "20", "▼")
-                + "</div>"
-                + "<div class=row>"
-                + wide("4", "↩ " + html(app.getString(R.string.remote_back)))
-                + wide("3", "⌂ " + html(app.getString(R.string.remote_home))) + "</div>"
-                + "<div class=row>"
-                + wide("25", "🔉 −") + wide("164", "🔇") + wide("24", "🔊 +") + "</div>"
-                + "<a class=link href='/?k=" + token(app) + "'>" + html(app.getString(R.string.remote_type)) + "</a>"
+                + k("up", 19, "▲") + k("ok", 23, "OK")
+                + k("left", 21, "◀") + k("right", 22, "▶") + k("down", 20, "▼") + "</div>"
+                + "<div class=row>" + k("", 4, "↩") + k("", 3, "⌂")
+                + k("", 25, "🔉−") + k("", 164, "🔇") + k("", 24, "🔊+") + "</div>"
+                + "<div class=row>" + k("", 89, "⏪") + k("", 85, "⏯") + k("", 90, "⏩") + "</div>"
+                + "<div class=nums>"
+                + k("", 8, "1") + k("", 9, "2") + k("", 10, "3") + k("", 11, "4") + k("", 12, "5")
+                + k("", 13, "6") + k("", 14, "7") + k("", 15, "8") + k("", 16, "9") + k("", 7, "0") + "</div>"
+                + "<a class=link href='/?k=" + token(app) + "'>⌨ "
+                + html(app.getString(R.string.remote_type)) + "</a>"
                 + "<div id=s></div><script>"
                 + "var k=new URLSearchParams(location.search).get('k'),s=document.getElementById('s');"
-                + "function key(c){fetch('/key?k='+encodeURIComponent(k),{method:'POST',body:c})"
-                + ".then(function(r){return r.text()}).then(function(r){if(r=='noremote')s.textContent="
-                + js(R.string.page_offline) + ";}).catch(function(){})}"
+                + "function post(p,b){return fetch(p+'?k='+encodeURIComponent(k),{method:'POST',body:b})"
+                + ".then(function(r){return r.text()}).then(function(r){s.textContent="
+                + "r=='noremote'?" + js(R.string.page_offline) + ":r=='noapp'?" + js(R.string.remote_noapp)
+                + ":'';}).catch(function(){})}"
                 + "document.querySelectorAll('[data-k]').forEach(function(b){"
-                + "b.addEventListener('click',function(){key(b.getAttribute('data-k'))});});"
+                + "b.addEventListener('click',function(){post('/key',b.getAttribute('data-k'))});});"
+                + "document.querySelectorAll('[data-app]').forEach(function(b){"
+                + "b.addEventListener('click',function(){post('/app',b.getAttribute('data-app'))});});"
                 + "</script></body></html>";
     }
 
-    private static String btn(String cls, String code, String label) {
+    private static String k(String cls, int code, String label) {
         return "<button class='k " + cls + "' data-k=" + code + ">" + label + "</button>";
-    }
-
-    private static String wide(String code, String label) {
-        return "<button class='k wide' data-k=" + code + ">" + label + "</button>";
     }
 
     private String denied() {

@@ -38,4 +38,8 @@
     <string name="remote_back">Orqaga</string>
     <string name="remote_home">Bosh sahifa</string>
     <string name="remote_type">Yozishga o\'tish</string>
+    <string name="remote_sec_volume">Ovoz</string>
+    <string name="remote_sec_player">Pleyer</string>
+    <string name="remote_sec_numbers">Raqamlar</string>
+    <string name="remote_noapp">Ilova ochilmadi</string>
 </resources>
