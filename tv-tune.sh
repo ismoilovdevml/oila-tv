@@ -7,7 +7,7 @@ S=${1:?ip:port}; MODE=${2:?apply|rollback}
 adb -s "$S" root >/dev/null; sleep 3; adb connect "$S" >/dev/null
 A="adb -s $S shell"
 
-HOME_NEW=uz.oila.tv/.HomeActivity
+HOME_NEW=uz.oila.tv/.WebHomeActivity
 HOME_STOCK=com.ktc.mslauncher/.MainActivity
 # Background apps with no user-facing value here:
 #   zeasn asdprovider/general = ad + telemetry delivery for the stock launcher

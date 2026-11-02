@@ -1,0 +1,107 @@
+<!doctype html><html lang="uz"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, user-scalable=no">
+<title>Oila TV</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#9FC4C3;overflow:hidden}
+#fit{position:absolute;top:50%;left:50%;width:1920px;height:1080px;transform-origin:center center}
+.fx{transition:transform .22s cubic-bezier(.2,.8,.2,1),background .22s ease,box-shadow .22s ease,color .22s ease}
+button{all:unset;cursor:pointer;box-sizing:border-box;font-family:inherit}
+</style></head>
+<body>
+<div id="fit" style="font-family:'Inter',system-ui,sans-serif;color:#fff">
+
+  <svg width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true" style="position:absolute;inset:0">
+    <rect width="1920" height="1080" fill="#A9CCCA"></rect>
+    <rect width="1920" height="330" fill="#BCD8D5"></rect>
+    <path d="M0 470 L 220 330 L 380 420 L 560 280 L 760 430 L 980 300 L 1180 420 L 1380 290 L 1600 410 L 1760 340 L 1920 400 V 520 H0 Z" fill="#7FA6A6"></path>
+    <path d="M0 520 L 300 420 L 520 490 L 820 400 L 1100 500 L 1400 410 L 1700 490 L 1920 450 V 560 H0 Z" fill="#5F8B8C"></path>
+    <rect y="555" width="1920" height="260" fill="#4E7F86"></rect>
+    <path d="M200 610 H 700 M 1000 640 H 1600 M 400 690 H 900 M 1200 720 H 1700 M 100 760 H 500" stroke="#6F9FA5" stroke-width="3" stroke-linecap="round"></path>
+    <path d="M0 800 C 400 770, 800 800, 1200 790 S 1700 770, 1920 790 V1080 H0 Z" fill="#3D6B5B"></path>
+    <path d="M0 920 C 500 880, 1000 920, 1500 905 S 1800 900, 1920 910 V1080 H0 Z" fill="#2C5245"></path>
+  </svg>
+
+  <header style="position:absolute;left:0;right:0;top:52px;display:flex;justify-content:center">
+    <div style="display:flex;align-items:center;gap:28px;height:84px;padding:0 34px;border-radius:999px;background:rgba(18,52,56,0.38);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.28)">
+      <span style="display:inline-flex;align-items:center;gap:12px;font-size:24px;font-weight:700">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CFF1EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V20h14V9.5"></path><path d="M10 20v-5h4v5"></path></svg>
+        Oila TV
+      </span>
+      <span style="width:1px;height:36px;background:rgba(255,255,255,0.35)"></span>
+      <span id="clock" style="font-size:40px;font-weight:600;letter-spacing:-0.02em;font-variant-numeric:tabular-nums">00:00</span>
+      <span id="date" style="font-size:20px;font-weight:500;color:rgba(255,255,255,0.85)"></span>
+      <span style="width:1px;height:36px;background:rgba(255,255,255,0.35)"></span>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#CFF1EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15 15 0 0 1 20 0"></path><path d="M5 12.4a10 10 0 0 1 14 0"></path><path d="M8.5 15.9a5 5 0 0 1 7 0"></path><path d="M12 19.5h.01"></path></svg>
+    </div>
+  </header>
+
+  <section id="apps" style="position:absolute;left:120px;right:120px;top:210px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:36px"></section>
+  <section id="sys" style="position:absolute;left:120px;right:120px;top:696px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:36px"></section>
+
+  <footer style="position:absolute;left:0;right:0;bottom:52px;display:flex;justify-content:center">
+    <div style="display:flex;align-items:center;gap:36px;height:60px;padding:0 30px;border-radius:999px;background:rgba(18,52,56,0.38);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.22);font-size:19px;font-weight:500">
+      <span style="display:inline-flex;align-items:center;gap:10px"><span style="display:inline-flex;align-items:center;height:28px;padding:0 9px;border-radius:8px;border:2px solid #fff;font-size:14px;font-weight:700">OK</span>Tanlash</span>
+      <span style="display:inline-flex;align-items:center;gap:10px"><span style="width:18px;height:18px;border-radius:999px;background:#E08A7E"></span>YouTube</span>
+      <span style="display:inline-flex;align-items:center;gap:10px"><span style="width:18px;height:18px;border-radius:999px;background:#7FD3A0"></span>Qidiruv</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+var APPS=[
+ {id:'youtube',name:'YouTube',sub:'Multfilmlar, musiqa va sevimli kanallar',color:'#B5574B',d:'M3 6.5a2.5 2.5 0 0 1 2.5-2.5h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z M10 9v6l5-3z'},
+ {id:'jonli',name:'Jonli TV',sub:'Efir kanallari — yangiliklar va sport',color:'#2F6D7C',d:'M3 7h18v12H3z M8 3l4 4 4-4'},
+ {id:'netflix',name:'Netflix',sub:'Kinolar va seriallar butun oila uchun',color:'#7A3B44',d:'M4 4h16v16H4z M8 4v16 M16 4v16 M4 9h4 M4 15h4 M16 9h4 M16 15h4'},
+ {id:'galereya',name:'Galereya',sub:'Fleshkadagi oilaviy video va rasmlar',color:'#565C8C',d:'M3 5h18v14H3z M3 16l5-5 4 4 3-3 6 6 M15 9.5h.01'}
+];
+var SYS=[
+ {id:'qurilma',name:'Qurilma',sub:'HDMI / Pristavka',d:'M4 7h16v6l-3 4H7l-3-4z M8 10.5h8 M9 17v3 M15 17v3'},
+ {id:'wifi',name:'Wi-Fi',sub:'Tarmoqqa ulanish',d:'M2 8.8a15 15 0 0 1 20 0 M5 12.4a10 10 0 0 1 14 0 M8.5 15.9a5 5 0 0 1 7 0 M12 19.5h.01'},
+ {id:'sozlamalar',name:'Sozlamalar',sub:'Til, vaqt, ekran',d:'M4 6h9 M17 6h3 M4 12h3 M11 12h9 M4 18h11 M19 18h1 M15 4v4 M9 10v4 M17 16v4'},
+ {id:'ilovalar',name:'Ilovalar',sub:'Barcha ilovalar',d:'M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z'}
+];
+var order=APPS.concat(SYS), focus=0;
+function appCard(a,on){
+  return "<button class=fx data-id='"+a.id+"' style=\"height:420px;border-radius:40px;padding:34px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(255,255,255,0.4);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);background:"+(on?'rgba(255,255,255,0.88)':'rgba(18,52,56,0.32)')+";transform:"+(on?'translateY(-14px) scale(1.03)':'none')+";box-shadow:"+(on?'0 34px 70px rgba(10,35,38,0.4)':'none')+"\">"+
+   "<span style='width:100px;height:100px;border-radius:30px;display:flex;align-items:center;justify-content:center;background:"+a.color+"'>"+
+   "<svg width=48 height=48 viewBox='0 0 24 24' fill=none stroke=#fff stroke-width=1.9 stroke-linecap=round stroke-linejoin=round><path d='"+a.d+"'></path></svg></span>"+
+   "<span style='display:flex;flex-direction:column;gap:8px;text-align:left'>"+
+   "<span style='font-size:42px;font-weight:700;letter-spacing:-0.02em;color:"+(on?'#12302E':'#fff')+"'>"+a.name+"</span>"+
+   "<span style='font-size:20px;font-weight:500;line-height:1.35;color:"+(on?'#3B5C59':'rgba(255,255,255,0.88)')+"'>"+a.sub+"</span></span>"+
+   (on?"<span style='display:inline-flex;align-items:center;gap:12px;font-size:19px;font-weight:600;color:#1C4A47'><span style='display:inline-flex;align-items:center;height:32px;padding:0 10px;border-radius:8px;background:#1C4A47;color:#fff;font-size:15px;font-weight:700'>OK</span>Ochish</span>":"")+
+   "</button>";
+}
+function sysCard(a,on){
+  return "<button class=fx data-id='"+a.id+"' style=\"height:110px;border-radius:999px;padding:0 34px;display:flex;align-items:center;gap:20px;border:1px solid rgba(255,255,255,0.35);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);color:"+(on?'#12302E':'#fff')+";background:"+(on?'rgba(255,255,255,0.88)':'rgba(18,52,56,0.38)')+";transform:"+(on?'scale(1.04)':'none')+"\">"+
+   "<svg width=34 height=34 viewBox='0 0 24 24' fill=none stroke='"+(on?'#1C4A47':'#CFF1EA')+"' stroke-width=2 stroke-linecap=round stroke-linejoin=round><path d='"+a.d+"'></path></svg>"+
+   "<span style='display:flex;flex-direction:column;gap:2px;text-align:left'>"+
+   "<span style='font-size:24px;font-weight:700'>"+a.name+"</span>"+
+   "<span style='font-size:17px;font-weight:500;opacity:0.85'>"+a.sub+"</span></span></button>";
+}
+function render(){
+  document.getElementById('apps').innerHTML=APPS.map(function(a,i){return appCard(a,focus===i)}).join('');
+  document.getElementById('sys').innerHTML=SYS.map(function(a,i){return sysCard(a,focus===i+4)}).join('');
+  document.querySelectorAll('[data-id]').forEach(function(b){b.onclick=function(){launch(b.getAttribute('data-id'))}});
+}
+function nav(dir){
+  var r=focus<4?0:1, c=focus%4;
+  if(dir=='left')c=Math.max(0,c-1);
+  else if(dir=='right')c=Math.min(3,c+1);
+  else if(dir=='up')r=0; else if(dir=='down')r=1;
+  focus=r*4+c; render();
+}
+function ok(){launch(order[focus].id)}
+function launch(id){ if(window.Android&&Android.launch)Android.launch(id); }
+var DAYS=['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
+var MON=['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+function tick(){var n=new Date(),p=function(x){return(x<10?'0':'')+x};
+  document.getElementById('clock').textContent=p(n.getHours())+':'+p(n.getMinutes());
+  document.getElementById('date').textContent=DAYS[n.getDay()]+', '+n.getDate()+'-'+MON[n.getMonth()];}
+function fit(){var s=Math.min(window.innerWidth/1920,window.innerHeight/1080);
+  document.getElementById('fit').style.transform='translate(-50%,-50%) scale('+s+')';}
+window.addEventListener('resize',fit);
+render();tick();fit();setInterval(tick,15000);
+</script>
+</body></html>
