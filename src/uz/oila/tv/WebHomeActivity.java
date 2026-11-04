@@ -26,6 +26,7 @@ public final class WebHomeActivity extends Activity {
     private static final String YOUTUBE = "com.google.android.youtube.tv";
     private static final String FALLBACK_TUNER = "com.mediatek.tvinput/.tuner.TunerInputService/HW0";
     private WebView web;
+    private String loadedWp;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -39,7 +40,8 @@ public final class WebHomeActivity extends Activity {
             web.setFocusable(false); // keys go to the activity, which drives focus in JS
             web.setFocusableInTouchMode(false);
             web.addJavascriptInterface(new Bridge(), "Android");
-            web.loadUrl("file:///android_asset/home/" + style() + "/index.html");
+            loadedWp = wallpaper();
+            web.loadUrl("file:///android_asset/home/" + style() + "/index.html?wp=" + loadedWp);
             setContentView(web);
         } catch (Throwable t) {
             startActivity(new Intent(this, HomeActivity.class));
@@ -53,11 +55,19 @@ public final class WebHomeActivity extends Activity {
     protected void onResume() {
         super.onResume();
         PhoneLink.restoreKeyboard(this);
+        // Reload the page if the wallpaper was changed in the Appearance screen.
+        if (web != null && loadedWp != null && !loadedWp.equals(wallpaper())) {
+            loadedWp = wallpaper();
+            web.loadUrl("file:///android_asset/home/" + style() + "/index.html?wp=" + loadedWp);
+        }
     }
 
     private String style() {
-        SharedPreferences p = getSharedPreferences("home", MODE_PRIVATE);
-        return p.getString("style", "kol");
+        return getSharedPreferences("home", MODE_PRIVATE).getString("style", "kol");
+    }
+
+    private String wallpaper() {
+        return getSharedPreferences("home", MODE_PRIVATE).getString("wp", "kol");
     }
 
     @Override

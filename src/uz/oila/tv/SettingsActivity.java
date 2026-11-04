@@ -29,9 +29,10 @@ public final class SettingsActivity extends Activity {
                 new Tile(this, getString(R.string.settings_about), getString(R.string.settings_about_sub),
                         Glyphs.INFO, 0xFFBD7CEA, 0xFF8538D2),
                 new Tile(this, getString(R.string.settings_phone), getString(R.string.settings_phone_sub),
-                        Glyphs.PHONE, 0xFFF27B9B, 0xFFD23A68) };
+                        Glyphs.PHONE, 0xFFF27B9B, 0xFFD23A68),
+                new Tile(this, "Ko'rinish", "Fon rasmi, mavzu", Glyphs.SLIDERS, 0xFF5CB8E8, 0xFF2D7FC0) };
         final Class<?>[] screens = { WifiActivity.class, LanguageActivity.class, DateTimeActivity.class,
-                BoostActivity.class, AboutActivity.class, PhoneActivity.class };
+                BoostActivity.class, AboutActivity.class, PhoneActivity.class, AppearanceActivity.class };
         for (int i = 0; i < tiles.length; i++) {
             final int index = i;
             tiles[i].setOnClickListener(new View.OnClickListener() {
@@ -42,7 +43,7 @@ public final class SettingsActivity extends Activity {
         }
         // The vendor menu (factory reset etc.) stays reachable only from About, away from daily use.
         root.addView(Ui.tileRow(this, tiles[0], tiles[1], tiles[2]), Ui.weighted(22));
-        root.addView(Ui.tileRow(this, tiles[3], tiles[4], tiles[5]), Ui.weighted(22));
+        root.addView(Ui.tileRow(this, tiles[3], tiles[4], tiles[5], tiles[6]), Ui.weighted(22));
 
         LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(-1, 52);
         footLp.topMargin = 14;

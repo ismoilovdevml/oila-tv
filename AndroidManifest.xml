@@ -119,6 +119,10 @@
             android:excludeFromRecents="true"
             android:screenOrientation="landscape" />
         <activity
+            android:name=".AppearanceActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".PhoneActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="landscape" />
